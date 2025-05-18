@@ -20,6 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'nip',
+        'divisi_id',
+        'role',
         'password',
     ];
 
@@ -41,4 +44,16 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function divisi() {
+        return $this->belongsTo(Divisi::class);
+    }
+
+    public function catatanKehadiran() {
+        return $this->hasMany(CatatanKehadiran::class, 'users_id');
+    }
+
+    public function permintaanCuti() {
+        return $this->hasMany(permintaanCuti::class, 'users_id');
+    }
 }
