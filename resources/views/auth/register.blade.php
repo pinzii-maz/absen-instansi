@@ -1,11 +1,25 @@
 <x-guest-layout>
     <!-- Add required styles -->
     <style>
+        :root {
+            --bg-light: #FFF5F6;
+            --bg-dark: #111827;
+            --text-light: #1a1a1a;
+            --text-dark: #f3f4f6;
+            --card-dark: #1f2937;
+            --accent-dark: #60a5fa;
+        }
+
         .auth-container {
-            background-color: #FFF5F6;
+            background-color: var(--bg-light);
             min-height: 100vh;
             position: relative;
             overflow: hidden;
+        }
+
+        .dark .auth-container {
+            background-color: var(--bg-dark);
+            background: linear-gradient(to bottom right, var(--bg-dark), #1a237e);
         }
 
         .auth-container::before {
@@ -22,30 +36,26 @@
             z-index: 0;
         }
 
-        @keyframes rotate {
-            0% { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            100% { transform: rotate(360deg) scale(1); }
+        .dark .auth-container::before {
+            background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, rgba(13, 17, 23, 0) 50%),
+                        radial-gradient(circle at 70% 30%, rgba(96, 165, 250, 0.2) 0%, transparent 50%),
+                        radial-gradient(circle at 30% 70%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
         }
-        
+
         .form-input, .form-select {
             background: rgba(255, 255, 255, 0.9) !important;
             border: 1px solid rgba(37, 99, 235, 0.2) !important;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #1a365d !important;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-color: rgba(37, 99, 235, 0.5) !important;
-            box-shadow: 0 0 15px rgba(37, 99, 235, 0.2) !important;
-            transform: translateY(-2px);
+            color: var(--text-light) !important;
         }
 
-        .form-input::placeholder, .form-select {
-            color: rgba(55, 65, 81, 0.6);
+        .dark .form-input, .dark .form-select {
+            background: rgba(31, 41, 55, 0.9) !important;
+            border: 1px solid rgba(96, 165, 250, 0.2) !important;
+            color: var(--text-dark) !important;
+        }
+
+        .dark .form-input::placeholder, .dark .form-select {
+            color: rgba(156, 163, 175, 0.6);
         }
 
         .register-title {
@@ -53,9 +63,12 @@
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            font-size: 2.5rem;
-            letter-spacing: -0.02em;
-            text-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .dark .register-title {
+            background: linear-gradient(45deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .auth-button {
@@ -112,6 +125,11 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
 
+        .dark .auth-form {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.1);
+        }
+
         /* Custom select styling */
         .form-select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
@@ -143,6 +161,10 @@
             letter-spacing: 0.025em;
         }
 
+        .dark .text-gray-300 {
+            color: #d1d5db !important;
+        }
+
         /* Link hover effects */
         .hover-link {
             color: #2563eb;
@@ -153,6 +175,10 @@
         .hover-link:hover {
             color: #1e40af;
             text-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .dark .hover-link:hover {
+            color: var(--accent-dark);
         }
 
         /* Enhanced responsive design */
@@ -195,6 +221,22 @@
             height: 2px;
             background-color: rgba(59, 130, 246, 0.5);
             border-radius: 50%;
+        }
+
+        .dark .text-gray-400 {
+            color: #9ca3af;
+        }
+
+        .dark .text-gray-500 {
+            color: #6b7280;
+        }
+
+        .dark .text-blue-400 {
+            color: var(--accent-dark);
+        }
+
+        .dark .text-blue-400:hover {
+            color: #93c5fd;
         }
     </style>
 
@@ -374,6 +416,20 @@
                 input.addEventListener('blur', () => {
                     input.classList.remove('glow');
                 });
+            });
+
+            // Initialize theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.classList.remove('light', 'dark');
+            document.body.classList.add(savedTheme);
+
+            // Listen for theme changes
+            window.addEventListener('themeChanged', function(e) {
+                const newTheme = e.detail;
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.body.classList.remove('light', 'dark');
+                document.body.classList.add(newTheme);
             });
         });
     </script>
