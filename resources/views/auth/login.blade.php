@@ -1,11 +1,25 @@
 <x-guest-layout>
     <!-- Add required styles -->
     <style>
+        :root {
+            --bg-light: #FFF5F6;
+            --bg-dark: #111827;
+            --text-light: #1a1a1a;
+            --text-dark: #f3f4f6;
+            --card-dark: #1f2937;
+            --accent-dark: #60a5fa;
+        }
+
         .auth-container {
-            background-color: #FFF5F6;
+            background-color: var(--bg-light);
             min-height: 100vh;
             position: relative;
             overflow: hidden;
+        }
+
+        .dark .auth-container {
+            background-color: var(--bg-dark);
+            background: linear-gradient(to bottom right, var(--bg-dark), #1a237e);
         }
 
         /* Enhanced animated background patterns */
@@ -21,6 +35,13 @@
                 radial-gradient(circle at 50% 80%, rgba(30, 64, 175, 0.1) 0%, transparent 25%);
             animation: patternMove 20s ease-in-out infinite alternate;
             z-index: 0;
+        }
+
+        .dark .bg-pattern {
+            background-image: 
+                radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.2) 0%, transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(29, 78, 216, 0.2) 0%, transparent 25%),
+                radial-gradient(circle at 50% 80%, rgba(30, 64, 175, 0.2) 0%, transparent 25%);
         }
 
         .decorative-pattern {
@@ -53,13 +74,24 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         
+        .dark .form-container {
+            background: rgba(31, 41, 55, 0.8);
+            border: 1px solid rgba(96, 165, 250, 0.1);
+        }
+
         .form-input {
             background: rgba(255, 255, 255, 0.9) !important;
             border: 1px solid rgba(37, 99, 235, 0.2) !important;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            color: #1a365d !important;
+            color: var(--text-light) !important;
             position: relative;
             overflow: hidden;
+        }
+        
+        .dark .form-input {
+            background: rgba(31, 41, 55, 0.9) !important;
+            border: 1px solid rgba(96, 165, 250, 0.2) !important;
+            color: var(--text-dark) !important;
         }
         
         .form-input:focus {
@@ -73,6 +105,10 @@
             color: rgba(55, 65, 81, 0.6);
         }
 
+        .dark .form-input::placeholder {
+            color: rgba(156, 163, 175, 0.6);
+        }
+
         .login-title {
             background: linear-gradient(45deg, #1a365d, #2563eb);
             -webkit-background-clip: text;
@@ -81,6 +117,12 @@
             font-size: 2.5rem;
             letter-spacing: -0.02em;
             text-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+        }
+
+        .dark .login-title {
+            background: linear-gradient(45deg, #60a5fa, #93c5fd);
+            -webkit-background-clip: text;
+            background-clip: text;
         }
 
         .auth-button {
@@ -120,9 +162,17 @@
             font-weight: 500;
         }
 
+        .dark .hover-link {
+            color: var(--accent-dark);
+        }
+
         .hover-link:hover {
             color: #1e40af;
             text-shadow: 0 0 20px rgba(37, 99, 235, 0.3);
+        }
+
+        .dark .hover-link:hover {
+            color: #93c5fd;
         }
 
         /* Custom checkbox styling */
@@ -174,6 +224,10 @@
             z-index: 2;
         }
 
+        .dark .input-icon {
+            color: #9ca3af;
+        }
+
         .input-group:focus-within .input-icon {
             color: #2563eb;
             transform: translateY(-50%) scale(1.1);
@@ -208,6 +262,14 @@
                 margin: 0.5rem;
                 padding: 1rem;
             }
+        }
+
+        .dark .text-gray-400 {
+            color: #9ca3af;
+        }
+
+        .dark .text-gray-300 {
+            color: #d1d5db;
         }
     </style>
 
@@ -351,6 +413,20 @@
                     icon.style.color = 'rgba(255, 255, 255, 0.4)';
                     group.style.transform = 'translateY(0)';
                 });
+            });
+
+            // Initialize theme from localStorage
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            document.body.classList.remove('light', 'dark');
+            document.body.classList.add(savedTheme);
+
+            // Listen for theme changes
+            window.addEventListener('themeChanged', function(e) {
+                const newTheme = e.detail;
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.body.classList.remove('light', 'dark');
+                document.body.classList.add(newTheme);
             });
         });
     </script>

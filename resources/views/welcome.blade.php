@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" data-theme="light">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -8,6 +8,14 @@
         <!-- DaisyUI dan Tailwind -->
         <link href="https://cdn.jsdelivr.net/npm/daisyui@3.9.4/dist/full.css" rel="stylesheet">
         <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                darkMode: 'class',
+                theme: {
+                    extend: {}
+                }
+            }
+        </script>
         
         <!-- AOS Animation Library -->
         <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
@@ -17,11 +25,37 @@
         <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
 
         <style>
+            :root {
+                --background-light: #FFF5F6;
+                --background-dark: #111827;
+                --card-dark: #1f2937;
+                --text-light: #1a1a1a;
+                --text-dark: #f3f4f6;
+                --accent-dark: #60a5fa;
+                --gradient-dark-start: #1e40af;
+                --gradient-dark-end: #3b82f6;
+            }
+
+            .dark {
+                background: linear-gradient(to bottom right, var(--background-dark), #1a237e);
+                color: var(--text-dark);
+            }
+
+            .light {
+                background-color: var(--background-light);
+                color: var(--text-light);
+            }
+
             .hero-pattern {
-                background-color: #FFF5F6;
+                background-color: var(--background-light);
                 position: relative;
                 overflow: hidden;
             }
+
+            .dark .hero-pattern {
+                background: linear-gradient(to bottom right, var(--background-dark), #1a237e);
+            }
+
             .decorative-pattern {
                 position: absolute;
                 bottom: 0;
@@ -134,10 +168,133 @@
                     display: none;
                 }
             }
+
+            .dark .navbar-glass {
+                background-color: rgba(17, 24, 39, 0.85);
+                border-bottom: 1px solid rgba(96, 165, 250, 0.1);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .dark .stats-card {
+                background: rgba(31, 41, 55, 0.8);
+                border: 1px solid rgba(96, 165, 250, 0.1);
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .dark .gradient-text {
+                background: linear-gradient(45deg, var(--accent-dark), #93c5fd);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .dark .text-gray-600 {
+                color: #e5e7eb;
+            }
+
+            .dark .text-gray-800 {
+                color: #f9fafb;
+            }
+
+            .dark .auth-button {
+                background: rgba(31, 41, 55, 0.6);
+                color: var(--accent-dark);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                backdrop-filter: blur(8px);
+            }
+
+            .dark .auth-button:hover {
+                background: rgba(31, 41, 55, 0.8);
+                border-color: var(--accent-dark);
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+            }
+
+            .dark .clock-container {
+                background: rgba(31, 41, 55, 0.6);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            }
+
+            .dark .clock-text {
+                background: linear-gradient(45deg, var(--accent-dark), #93c5fd);
+                -webkit-background-clip: text;
+                background-clip: text;
+                color: transparent;
+            }
+
+            .theme-toggle {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                z-index: 50;
+                padding: 0.75rem;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            }
+
+            .theme-toggle:hover {
+                transform: scale(1.1) rotate(8deg);
+            }
+
+            .dark .theme-toggle {
+                background: rgba(31, 41, 55, 0.6);
+                border: 1px solid rgba(96, 165, 250, 0.2);
+                color: var(--accent-dark);
+            }
+
+            .dark .theme-toggle:hover {
+                border-color: var(--accent-dark);
+                box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+            }
+
+            /* Card hover effects in dark mode */
+            .dark .card-hover {
+                transition: all 0.3s ease;
+                border: 1px solid rgba(96, 165, 250, 0.1);
+            }
+
+            .dark .card-hover:hover {
+                transform: translateY(-5px);
+                border-color: var(--accent-dark);
+                box-shadow: 0 10px 20px rgba(96, 165, 250, 0.1);
+            }
+
+            /* Feature cards in dark mode */
+            .dark .stats-card svg {
+                color: var(--accent-dark);
+                filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
+            }
+
+            /* Bottom image in dark mode */
+            .dark img {
+                filter: brightness(0.9) contrast(1.1);
+                transition: all 0.3s ease;
+            }
+
+            .dark img:hover {
+                filter: brightness(1) contrast(1.1);
+            }
+
+            /* Smooth theme transition */
+            body {
+                transition: background-color 0.3s ease, color 0.3s ease;
+            }
+
+            /* Enhanced decorative pattern for dark mode */
+            .dark .decorative-pattern {
+                opacity: 0.1;
+                mix-blend-mode: lighten;
+            }
         </style>
     </head>
     
-    <body class="antialiased bg-[#FFF5F6]">
+    <body class="antialiased light">
         <!-- Navbar with Glassmorphism -->
         <div class="navbar navbar-glass shadow-sm px-8 fixed top-0 z-50 transition-all duration-300">
             <!-- Bagian Kiri -->
@@ -149,7 +306,7 @@
                         class="h-12 w-auto"
                     >
                     <div class="flex flex-col navbar-brand-text">
-                        <h1 class="font-bold text-lg gradient-text">Biro Administrasi Pimpinan</h1>
+                        <h1 class="font-bold text-lg gradient-text">Sekretariat Daerah</h1>
                         <p class="text-sm text-gray-600">Provinsi Kalimantan Timur</p>
                     </div>
                 </div>
@@ -280,46 +437,99 @@
             >
         </div>
 
+        <!-- Theme Toggle Button -->
+        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+            </svg>
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 moon-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+            </svg>
+        </button>
+
         <!-- AOS Animation Script -->
         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
         <script>
-            AOS.init({
-                duration: 800,
-                once: true,
-            });
-
-            // Parallax Effect
-            window.addEventListener('scroll', function() {
-                const scrolled = window.pageYOffset;
-                const parallaxElements = document.querySelectorAll('.decorative-pattern');
-                parallaxElements.forEach(element => {
-                    element.style.transform = `translateY(${scrolled * 0.5}px)`;
-                });
-            });
-
-            // Real-time Clock Function
-            function updateClock() {
-                const now = new Date();
-                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
-                const day = days[now.getDay()];
-                
-                // Adjust for WITA (UTC+8)
-                let hours = now.getHours();
-                let minutes = now.getMinutes();
-                let seconds = now.getSeconds();
-
-                // Add leading zeros
-                hours = hours < 10 ? '0' + hours : hours;
-                minutes = minutes < 10 ? '0' + minutes : minutes;
-                seconds = seconds < 10 ? '0' + seconds : seconds;
-
-                const timeString = `${day}, ${hours}:${minutes}:${seconds} WITA`;
-                document.getElementById('clock').textContent = timeString;
+            // Theme management
+            function initializeTheme() {
+                const savedTheme = localStorage.getItem('theme') || 'light';
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                document.body.classList.remove('light', 'dark');
+                document.body.classList.add(savedTheme);
+                updateThemeIcons(savedTheme);
             }
 
-            // Update clock immediately and then every second
-            updateClock();
-            setInterval(updateClock, 1000);
+            function updateThemeIcons(theme) {
+                const sunIcon = document.querySelector('.sun-icon');
+                const moonIcon = document.querySelector('.moon-icon');
+                if (theme === 'dark') {
+                    sunIcon.classList.add('hidden');
+                    moonIcon.classList.remove('hidden');
+                } else {
+                    sunIcon.classList.remove('hidden');
+                    moonIcon.classList.add('hidden');
+                }
+            }
+
+            function toggleTheme() {
+                const isDark = document.body.classList.contains('dark');
+                const newTheme = isDark ? 'light' : 'dark';
+                document.documentElement.setAttribute('data-theme', newTheme);
+                document.body.classList.remove('light', 'dark');
+                document.body.classList.add(newTheme);
+                localStorage.setItem('theme', newTheme);
+                updateThemeIcons(newTheme);
+
+                // Dispatch a custom event for theme change
+                window.dispatchEvent(new CustomEvent('themeChanged', { detail: newTheme }));
+            }
+
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize AOS
+                AOS.init({
+                    duration: 800,
+                    once: true,
+                });
+
+                // Initialize theme
+                initializeTheme();
+                
+                // Theme toggle button click handler
+                const themeToggle = document.getElementById('themeToggle');
+                if (themeToggle) {
+                    themeToggle.addEventListener('click', toggleTheme);
+                }
+
+                // Parallax Effect
+                window.addEventListener('scroll', function() {
+                    const scrolled = window.pageYOffset;
+                    const parallaxElements = document.querySelectorAll('.decorative-pattern');
+                    parallaxElements.forEach(element => {
+                        element.style.transform = `translateY(${scrolled * 0.5}px)`;
+                    });
+                });
+
+                // Real-time Clock Function
+                function updateClock() {
+                    const now = new Date();
+                    const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                    const day = days[now.getDay()];
+                    
+                    let hours = now.getHours();
+                    let minutes = now.getMinutes();
+                    let seconds = now.getSeconds();
+
+                    hours = hours < 10 ? '0' + hours : hours;
+                    minutes = minutes < 10 ? '0' + minutes : minutes;
+                    seconds = seconds < 10 ? '0' + seconds : seconds;
+
+                    const timeString = `${day}, ${hours}:${minutes}:${seconds} WITA`;
+                    document.getElementById('clock').textContent = timeString;
+                }
+
+                updateClock();
+                setInterval(updateClock, 1000);
+            });
         </script>
     </body>
 </html>
