@@ -22,9 +22,9 @@ switch ($width) {
 @endphp
 
 <div class="relative" x-data="{ open: false }" @click.away="open = false">
-    <button type="button" @click="open = !open" class="w-full" aria-label="Toggle dropdown">
+    <div @click="open = !open" class="inline-flex items-center w-full">
         {{ $trigger }}
-    </button>
+    </div>
 
     <div x-show="open"
          x-cloak
