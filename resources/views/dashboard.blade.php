@@ -512,42 +512,7 @@
                 </div>
             </div>
 
-            <!-- Recent Activity Section -->
-            <div class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl mt-8">
-                <div class="p-8">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-8 flex items-center">
-                        <svg class="w-6 h-6 mr-2 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                        </svg>
-                        Aktivitas Terbaru
-                    </h3>
-                    
-                    <div class="space-y-4">
-                        @forelse($recentActivities ?? [] as $activity)
-                            <div class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <div class="flex items-center justify-between">
-                                    <div>
-                                        <p class="text-sm font-medium text-gray-500">{{ $activity->type }}</p>
-                                        <p class="text-lg font-semibold text-gray-800">{{ $activity->created_at->format('d M Y H:i') }}</p>
-                                    </div>
-                                    <div class="flex items-center">
-                                        <span class="px-3 py-1 rounded-full text-sm font-medium
-                                            @if($activity->status === 'success') bg-green-100 text-green-800
-                                            @elseif($activity->status === 'warning') bg-yellow-100 text-yellow-800
-                                            @else bg-red-100 text-red-800 @endif">
-                                            {{ $activity->status }}
-                                        </span>
-                                    </div>
-                                </div>
-                            </div>
-                        @empty
-                            <div class="text-center py-8">
-                                <p class="text-gray-500">Belum ada aktivitas terbaru</p>
-                            </div>
-                        @endforelse
-                    </div>
-                </div>
-            </div>
+            
         </div>
     </div>
 

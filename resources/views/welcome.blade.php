@@ -194,7 +194,7 @@
 
             .dark .text-gray-800 {
                 color: #f9fafb;
-            }
+            } 
 
             .dark .auth-button {
                 background: rgba(31, 41, 55, 0.6);
@@ -355,7 +355,7 @@
                         <h2 class="text-2xl md:text-3xl font-semibold text-gray-800">
                             Biro Administrasi Pimpinan
                         </h2>
-                        <p class="text-xl md:text-2xl font-medium text-gray-700 italic">
+                        <p class="text-xl md:text-2xl font-medium text-gray-800 italic">
                             "Jejak Kehadiran yang Tak Bisa Dimanipulasi"
                         </p>
                         <p class="text-lg text-gray-600">
@@ -419,23 +419,6 @@
                     </div>
                 </div>
 
-                <!-- Bottom Image with Parallax Effect -->
-                <div class="mt-12" data-aos="zoom-in">
-                    <img 
-                        src="{{ asset('images/11.78.jpg') }}" 
-                        alt="Bottom Decoration" 
-                        class="w-full h-auto rounded-lg shadow-xl transform hover:scale-[1.02] transition-transform duration-300"
-                    >
-                </div>
-            </div>
-
-            <!-- Decorative Pattern -->
-            <img 
-                src="{{ asset('images/pattern.png') }}" 
-                alt="Decorative Pattern" 
-                class="decorative-pattern"
-            >
-        </div>
 
         <!-- Theme Toggle Button -->
         <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
