@@ -31,9 +31,9 @@
 
             <!-- Settings Dropdown -->
             <div class="hidden sm:flex sm:items-center sm:ms-6">
-                <div x-data="{ open: false }" class="relative">
+                <div x-data="{ open: false }" class="relative z-50">
                     <button @click="open = !open" @click.away="open = false"
-                        class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none transition duration-150 ease-in-out">
+                        class="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none transition duration-150 ease-in-out dropdown-btn">
                         <span class="truncate max-w-[150px]">{{ Auth::user()->name }}</span>
                         <svg class="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                             fill="currentColor">
@@ -42,7 +42,8 @@
                                 clip-rule="evenodd" />
                         </svg>
                     </button>
-
+                    
+                    
                     <div x-show="open" x-transition:enter="transition ease-out duration-200"
                         x-transition:enter-start="transform opacity-0 scale-95"
                         x-transition:enter-end="transform opacity-100 scale-100"

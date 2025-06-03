@@ -277,7 +277,7 @@
                     <div class="space-y-2">
                         <x-input-label for="nip" :value="__('NIP')" class="text-gray-300 text-lg" />
                         <x-text-input id="nip" class="block w-full form-input rounded-lg text-lg py-3 glow" type="text" name="nip" :value="old('nip')" placeholder="Masukkan NIP (opsional)" />
-                        <p class="mt-1 text-gray-500">Jika anda memiliki NIP tolong di isi, jika tidak ada anda bisa lewati</p>
+                        <p class="mt-1 text-gray-300">Jika anda memiliki NIP tolong di isi, jika tidak ada anda bisa lewati</p>
             <x-input-error :messages="$errors->get('nip')" class="mt-2" />
         </div>
 

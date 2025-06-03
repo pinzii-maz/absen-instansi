@@ -539,6 +539,7 @@
                         <option value=""disabled selected>Pilih jenis izin</option>
                         <option value="sakit">Sakit</option>
                         <option value="dinas_luar">Dinas Luar</option>
+                        <option value="cuti">Tugas Luar</option>
                         <option value="cuti">Cuti</option>
                         <option value="lainnya">Lainnya</option>
                     </select>
@@ -562,7 +563,7 @@
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Surat (Wajib)</label>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Upload Surat Pendukung</label>
                     <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                         <div class="space-y-1 text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -593,16 +594,6 @@
             </form>
         </div>
     </div>
-
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-        </svg>
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 moon-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-        </svg>
-    </button>
 
     <script>
         // Function to show modal with fade effect

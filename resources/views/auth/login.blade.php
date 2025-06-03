@@ -91,11 +91,11 @@
         .dark .form-input {
             background: rgba(31, 41, 55, 0.9) !important;
             border: 1px solid rgba(96, 165, 250, 0.2) !important;
-            color: var(--text-dark) !important;
+            color: #ffffff !important;
         }
         
         .form-input:focus {
-            background: rgba(255, 255, 255, 0.95) !important;
+            background: rgba(19, 19, 19, 0.95) !important;
             border-color: rgba(37, 99, 235, 0.5) !important;
             box-shadow: 0 0 15px rgba(37, 99, 235, 0.2) !important;
             transform: translateY(-2px);
@@ -343,9 +343,9 @@
                         <!-- Register Link -->
                         <div class="text-center mt-6">
                             <p class="text-gray-400">
-                                {{ __("Don't have an account?") }}
+                                {{ __("Belum punya akun?") }}
                                 <a href="{{ route('register') }}" class="hover-link ms-1">
-                                    {{ __('Register here') }}
+                                    {{ __('Register disini') }}
                                 </a>
                             </p>
                         </div>
