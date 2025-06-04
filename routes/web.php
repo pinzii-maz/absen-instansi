@@ -18,9 +18,17 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [\App\Http\Controllers\KehadiranController::class, 'dashboard'])->name('dashboard');
+    
+    Route::post('/kehadiran/masuk', [\App\Http\Controllers\KehadiranController::class, 'absenMasuk'])->name('kehadiran.masuk');
+    Route::post('/kehadiran/pulang', [\App\Http\Controllers\KehadiranController::class, 'absenPulang'])->name('kehadiran.pulang');
+    Route::get('/kehadiran/izin', [\App\Http\Controllers\KehadiranController::class, 'izin'])->name('kehadiran.izin');
+});
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
