@@ -11,16 +11,30 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('catatan_kehadiran_tabel', function (Blueprint $table) {
+        Schema::create('catatan_kehadiran', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('users_id')->constrained('users');
-            $table->tinyInteger('jenis_kehadiran_id')
-                ->constrained('jenis_kehadiran');
-            $table->date('tanggal');
-            $table->string('tanda_tangan');       
-            $table->foreignId('permintaan_cuti_id')  
-                ->nullable()
-                ->constrained('permintaan_cuti');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
+            
+            
+            $table->unsignedTinyInteger('jenis_kehadiran_id'); 
+            $table->foreign('jenis_kehadiran_id')->references('id')->on('jenis_kehadiran');
+            
+            $table->date('tanggal_masuk')->nullable();      
+            $table->time('jam_masuk')->nullable();          
+            $table->string('ip_address_masuk')->nullable(); 
+
+            
+            $table->unsignedTinyInteger('jenis_kehadiran_id_pulang')->nullable(); 
+            $table->foreign('jenis_kehadiran_id_pulang')->references('id')->on('jenis_kehadiran');
+            $table->time('jam_pulang')->nullable();         
+            $table->string('ip_address_pulang')->nullable();
+            
+            // Untuk Izin
+            $table->date('tanggal_selesai_izin')->nullable();       
+            $table->text('keterangan_izin')->nullable();
+            $table->string('file_pendukung_izin')->nullable(); 
+
+            $table->text('catatan_tambahan')->nullable();
             $table->timestamps();
         });
     }

@@ -11,17 +11,40 @@ class CatatanKehadiran extends Model
 
     protected $table = 'catatan_kehadiran';
 
-    protected $fillable = ['users_id', 'jenis_kehadiran_id', 'tanggal','tanda_tangan','permintaan_cuti_id','keterangan'];
+    protected $fillable = [
+        'user_id',
+        'jenis_kehadiran_id',
+        'tanggal_masuk',
+        'jam_masuk',
+        'ip_address_masuk',
+        'jenis_kehadiran_id_pulang',
+        'jam_pulang',
+        'ip_address_pulang',
+        'tanggal_selesai_izin',
+        'keterangan_izin',
+        'file_pendukung_izin',
+        'catatan_tambahan',
+    ];
 
-    public function user() {
-        return $this->belongsTo(User::class, 'users_id');
+    protected $casts = [
+        'tanggal_masuk' => 'date',
+        'tanggal_selesai_izin' => 'date',
+        'jam_masuk' => 'time',
+        'jam_pulang' => 'time',
+    ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
     }
 
-    public function jenisKehadiran() {
+    public function jenisKehadiran()
+    {
         return $this->belongsTo(JenisKehadiran::class, 'jenis_kehadiran_id');
     }
 
-    public function permintaanCuti() {
-        return $this->belongsTo(PermintaanCuti::class, 'permintaan_cuti_id');
+    public function jenisKehadiranPulang()
+    {
+        return $this->belongsTo(JenisKehadiran::class, 'jenis_kehadiran_id_pulang');
     }
 }
