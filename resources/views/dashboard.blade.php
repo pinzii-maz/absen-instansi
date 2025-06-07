@@ -1,383 +1,5 @@
 <x-app-layout>
-    <style>
-        :root {
-            --background-light: #FFF5F6;
-            --background-dark: #111827;
-            --card-light: #ffffff;
-            --card-dark: #1f2937;
-            --text-light: #1a1a1a;
-            --text-dark: #f3f4f6;
-            --accent-dark: #60a5fa;
-            --border-dark: rgba(96, 165, 250, 0.1);
-            --gradient-dark-start: #1e40af;
-            --gradient-dark-end: #3b82f6;
-        }
-
-        body {
-            transition: background-color 0.3s ease, color 0.3s ease;
-            background-color: var(--background-light);
-            min-height: 100vh;
-            background: linear-gradient(to bottom right, var(--background-light), #e2e8f0);
-        }
-
-        .dark body {
-            background: linear-gradient(to bottom right, var(--background-dark), #1a237e);
-            color: var(--text-dark);
-        }
-
-        .dark .text-gray-800 {
-            color: var(--text-dark);
-        }
-
-        .dark .bg-white {
-            background-color: var(--card-dark);
-            border: 1px solid var(--border-dark);
-        }
-
-        .dark .text-gray-900 {
-            color: var(--text-dark);
-        }
-
-        .dark .text-gray-500 {
-            color: #9ca3af;
-        }
-
-        .dark .shadow-sm {
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-        }
-
-        .dark .shadow-md {
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-        }
-
-        .dark .bg-gray-50 {
-            background-color: rgba(31, 41, 55, 0.5);
-        }
-
-        .dark .bg-indigo-600 {
-            background-color: #4f46e5;
-        }
-
-        .dark .bg-green-600 {
-            background-color: #059669;
-        }
-
-        .dark .bg-blue-600 {
-            background-color: #2563eb;
-        }
-
-        .dark .hover\:bg-indigo-700:hover {
-            background-color: #4338ca;
-        }
-
-        .dark .hover\:bg-green-700:hover {
-            background-color: #047857;
-        }
-
-        .dark .hover\:bg-blue-700:hover {
-            background-color: #1d4ed8;
-        }
-
-        /* Enhanced card styling for dark mode */
-        .dark .bg-white.rounded-lg {
-            background: rgba(31, 41, 55, 0.8);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--border-dark);
-            transition: all 0.3s ease;
-        }
-
-        .dark .bg-white.rounded-lg:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-            border-color: var(--accent-dark);
-        }
-
-        /* Quick action buttons in dark mode */
-        .dark .inline-flex {
-            transition: all 0.3s ease;
-        }
-
-        .dark .inline-flex:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
-        }
-
-        /* SVG icons in dark mode */
-        .dark svg {
-            filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.2));
-        }
-
-        /* Additional styles for attendance features */
-        .attendance-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-        }
-
-        .dark .attendance-card {
-            background: rgba(31, 41, 55, 0.8);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-        }
-
-        .btn-disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-        }
-
-        .welcome-message {
-            font-size: 2rem;
-            font-weight: 600;
-            background: linear-gradient(45deg, #1a365d, #2563eb);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
-        }
-
-        .dark .welcome-message {
-            background: linear-gradient(45deg, var(--accent-dark), #93c5fd);
-            -webkit-background-clip: text;
-            background-clip: text;
-        }
-
-        /* Button styling */
-        .action-button {
-            background: linear-gradient(45deg, #2563eb, #1e40af);
-            color: white;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            padding: 0.75rem 1.5rem;
-            font-weight: 600;
-            letter-spacing: 0.025em;
-            text-transform: uppercase;
-            font-size: 0.875rem;
-            border-radius: 0.5rem;
-        }
-
-        .action-button:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
-        }
-
-        .dark .action-button {
-            background: linear-gradient(45deg, var(--gradient-dark-start), var(--gradient-dark-end));
-        }
-
-        .dark .action-button:hover {
-            box-shadow: 0 10px 20px rgba(96, 165, 250, 0.2);
-        }
-
-        /* Status indicators */
-        .status-indicator {
-            display: inline-flex;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            border-radius: 9999px;
-            font-weight: 500;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .dark .status-indicator {
-            background: rgba(31, 41, 55, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-        }
-
-        /* Floating animation */
-        .floating {
-            animation: floating 6s ease-in-out infinite;
-        }
-
-        @keyframes floating {
-            0% {
-                transform: translate(0, 0px);
-            }
-
-            50% {
-                transform: translate(0, 15px);
-            }
-
-            100% {
-                transform: translate(0, 0px);
-            }
-        }
-
-        /* Responsive design */
-        @media (max-width: 768px) {
-            .welcome-message {
-                font-size: 1.5rem;
-            }
-
-            .dashboard-card {
-                padding: 1rem;
-            }
-
-            .action-button {
-                padding: 0.5rem 1rem;
-                font-size: 0.75rem;
-            }
-        }
-
-        /* Modal styling */
-        .modal-content {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 1rem;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .dark .modal-content {
-            background: rgba(31, 41, 55, 0.9);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-        }
-
-        /* Clock styling */
-        .clock-container {
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 0.5rem 1.5rem;
-            border-radius: 9999px;
-            margin-bottom: 1rem;
-        }
-
-        .dark .clock-container {
-            background: rgba(31, 41, 55, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-        }
-
-        .clock-text {
-            background: linear-gradient(45deg, #2563eb, #1d4ed8);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            font-weight: 600;
-            letter-spacing: 0.05em;
-        }
-
-        .dark .clock-text {
-            background: linear-gradient(45deg, var(--accent-dark), #93c5fd);
-        }
-
-        /* Select element styling */
-        select {
-            background-color: var(--card-light) !important;
-            color: var(--text-light) !important;
-            border: 1px solid #e5e7eb !important;
-            padding: 0.5rem !important;
-            border-radius: 0.5rem !important;
-            width: 100% !important;
-            cursor: pointer !important;
-        }
-
-        .dark select {
-            background-color: var(--card-dark) !important;
-            color: var(--text-dark) !important;
-            border-color: var(--border-dark) !important;
-        }
-
-        select:focus {
-            outline: none !important;
-            border-color: var(--accent-dark) !important;
-            ring: 2px var(--accent-dark) !important;
-        }
-
-        /* Override default date input styling */
-        input[type="date"] {
-            appearance: none;
-            -webkit-appearance: none;
-            color: #374151;
-            background-color: #ffffff;
-        }
-
-        input[type="date"]::-webkit-calendar-picker-indicator {
-            background-color: #ffffff;
-            padding: 5px;
-            cursor: pointer;
-            border-radius: 3px;
-        }
-
-        /* Override default select styling */
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-
-        select::-ms-expand {
-            display: none;
-        }
-
-        /* Theme toggle button */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 50;
-            padding: 0.75rem;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        }
-
-        .theme-toggle:hover {
-            transform: scale(1.1) rotate(8deg);
-        }
-
-        .dark .theme-toggle {
-            background: rgba(31, 41, 55, 0.6);
-            border: 1px solid rgba(96, 165, 250, 0.2);
-            color: var(--accent-dark);
-        }
-
-        /* Enhanced animated background patterns */
-        .bg-pattern {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(29, 78, 216, 0.1) 0%, transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(30, 64, 175, 0.1) 0%, transparent 25%);
-            animation: patternMove 20s ease-in-out infinite alternate;
-            z-index: 0;
-        }
-
-        .dark .bg-pattern {
-            background-image:
-                radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.2) 0%, transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(29, 78, 216, 0.2) 0%, transparent 25%),
-                radial-gradient(circle at 50% 80%, rgba(30, 64, 175, 0.2) 0%, transparent 25%);
-        }
-
-        @keyframes patternMove {
-            0% {
-                transform: scale(1) rotate(0deg);
-            }
-
-            50% {
-                transform: scale(1.1) rotate(1deg);
-            }
-
-            100% {
-                transform: scale(1) rotate(0deg);
-            }
-        }
-    </style>
+    <link href="{{ asset('css/dashboard.css') }}" rel="stylesheet">
 
     <!-- Background Pattern -->
     <div class="bg-pattern"></div>
@@ -386,9 +8,6 @@
     <div class="relative min-h-screen z-10 py-12 px-4 sm:px-6 lg:px-8"
         style="background: linear-gradient(135deg, #f6f8fc 0%, #e9edf5 100%);">
         <div class="max-w-7xl mx-auto">
-
-
-
             <!-- Welcome and Attendance Section -->
             <div class="bg-white rounded-xl shadow-xl mb-8 transform transition-all duration-300 hover:shadow-2xl">
                 <div class="p-8">
@@ -487,7 +106,6 @@
                 </div>
             </div>
 
-
             <!-- Employee Information Section -->
             <div class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
                 <div class="p-8">
@@ -546,8 +164,6 @@
                     </div>
                 </div>
             </div>
-
-
         </div>
     </div>
 
@@ -587,7 +203,7 @@
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Tanggal Mulai</label>
                         <input type="date" name="tanggal_mulai"
-                            class="block w-full rounded-lg border focus:border-blue-500 focus:ring-blue-500 border-gray-300 bg-white px-4 py-2.5 text-gray-700">
+                            class="block w-full rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-gray-700 focus:border-blue-500 focus:ring-blue-500">
                     </div>
 
                     <div>
@@ -600,7 +216,7 @@
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Keterangan</label>
                     <textarea name="keterangan" rows="3"
-                        class="w-full rounded-lg border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all  text-gray-700"
+                        class="w-full rounded-lg border-gray-300 bg-white focus:border-blue-500 focus:ring focus:ring-blue-200 transition-all text-gray-700"
                         placeholder="Tuliskan alasan izin Anda..."></textarea>
                 </div>
 

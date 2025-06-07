@@ -64,36 +64,44 @@
                 height: auto;
                 z-index: 0;
             }
+
             .floating {
                 animation: floating 3s ease-in-out infinite;
             }
+
             @keyframes floating {
                 0% { transform: translate(0, 0px); }
                 50% { transform: translate(0, 15px); }
                 100% { transform: translate(0, 0px); }
             }
+
             .gradient-text {
                 background: linear-gradient(45deg, #1a365d, #2563eb);
                 -webkit-background-clip: text;
                 background-clip: text;
                 color: transparent;
             }
+
             .card-hover {
                 transition: all 0.3s ease;
             }
+
             .card-hover:hover {
                 transform: translateY(-5px);
                 box-shadow: 0 10px 20px rgba(0,0,0,0.1);
             }
+
             .stats-card {
                 backdrop-filter: blur(10px);
                 background: rgba(255, 255, 255, 0.8);
             }
+
             .navbar-glass {
                 background-color: rgba(255, 245, 246, 0.85);
                 backdrop-filter: blur(10px);
                 border-bottom: 1px solid rgba(255, 255, 255, 0.3);
             }
+
             .clock-container {
                 background: rgba(255, 255, 255, 0.2);
                 padding: 0.5rem 1.5rem;
@@ -102,7 +110,7 @@
                 border: 1px solid rgba(255, 255, 255, 0.3);
                 box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
-            
+
             .clock-text {
                 background: linear-gradient(45deg, #2563eb, #1d4ed8);
                 -webkit-background-clip: text;
@@ -110,15 +118,6 @@
                 color: transparent;
                 font-weight: 600;
                 letter-spacing: 0.05em;
-            }
-
-            @media (max-width: 768px) {
-                .clock-container {
-                    padding: 0.25rem 1rem;
-                }
-                .clock-text {
-                    font-size: 0.875rem;
-                }
             }
 
             .auth-button {
@@ -147,28 +146,26 @@
                 color: #1e40af;
             }
 
-            @media (max-width: 640px) {
-                .auth-button {
-                    padding: 0.375rem 1rem;
-                    font-size: 0.75rem;
-                }
-                
-                .navbar {
-                    padding-left: 1rem;
-                    padding-right: 1rem;
-                }
-                
-                .navbar-brand-text {
-                    display: none;
-                }
+            .theme-toggle {
+                position: fixed;
+                bottom: 2rem;
+                right: 2rem;
+                z-index: 50;
+                padding: 0.75rem;
+                border-radius: 50%;
+                background: rgba(255, 255, 255, 0.2);
+                backdrop-filter: blur(8px);
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                cursor: pointer;
+                transition: all 0.3s ease;
+                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             }
 
-            @media (max-width: 768px) {
-                .navbar-brand-text p {
-                    display: none;
-                }
+            .theme-toggle:hover {
+                transform: scale(1.1) rotate(8deg);
             }
 
+            /* Dark mode styles */
             .dark .navbar-glass {
                 background-color: rgba(17, 24, 39, 0.85);
                 border-bottom: 1px solid rgba(96, 165, 250, 0.1);
@@ -194,7 +191,7 @@
 
             .dark .text-gray-800 {
                 color: #f9fafb;
-            } 
+            }
 
             .dark .auth-button {
                 background: rgba(31, 41, 55, 0.6);
@@ -223,73 +220,39 @@
                 color: transparent;
             }
 
-            .theme-toggle {
-                position: fixed;
-                bottom: 2rem;
-                right: 2rem;
-                z-index: 50;
-                padding: 0.75rem;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(8px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
-
-            .theme-toggle:hover {
-                transform: scale(1.1) rotate(8deg);
-            }
-
             .dark .theme-toggle {
                 background: rgba(31, 41, 55, 0.6);
                 border: 1px solid rgba(96, 165, 250, 0.2);
                 color: var(--accent-dark);
             }
 
-            .dark .theme-toggle:hover {
-                border-color: var(--accent-dark);
-                box-shadow: 0 0 20px rgba(96, 165, 250, 0.3);
+            /* Responsive styles */
+            @media (max-width: 768px) {
+                .clock-container {
+                    padding: 0.25rem 1rem;
+                }
+                .clock-text {
+                    font-size: 0.875rem;
+                }
+                .navbar-brand-text p {
+                    display: none;
+                }
             }
 
-            /* Card hover effects in dark mode */
-            .dark .card-hover {
-                transition: all 0.3s ease;
-                border: 1px solid rgba(96, 165, 250, 0.1);
-            }
-
-            .dark .card-hover:hover {
-                transform: translateY(-5px);
-                border-color: var(--accent-dark);
-                box-shadow: 0 10px 20px rgba(96, 165, 250, 0.1);
-            }
-
-            /* Feature cards in dark mode */
-            .dark .stats-card svg {
-                color: var(--accent-dark);
-                filter: drop-shadow(0 0 8px rgba(96, 165, 250, 0.3));
-            }
-
-            /* Bottom image in dark mode */
-            .dark img {
-                filter: brightness(0.9) contrast(1.1);
-                transition: all 0.3s ease;
-            }
-
-            .dark img:hover {
-                filter: brightness(1) contrast(1.1);
-            }
-
-            /* Smooth theme transition */
-            body {
-                transition: background-color 0.3s ease, color 0.3s ease;
-            }
-
-            /* Enhanced decorative pattern for dark mode */
-            .dark .decorative-pattern {
-                opacity: 0.1;
-                mix-blend-mode: lighten;
+            @media (max-width: 640px) {
+                .auth-button {
+                    padding: 0.375rem 1rem;
+                    font-size: 0.75rem;
+                }
+                
+                .navbar {
+                    padding-left: 1rem;
+                    padding-right: 1rem;
+                }
+                
+                .navbar-brand-text {
+                    display: none;
+                }
             }
         </style>
     </head>
@@ -303,12 +266,11 @@
                     <img 
                         src="{{ asset('images/kaltim.png') }}" 
                         alt="Logo SETDA Kaltim" 
-                        class="h-12 w-auto"
-                    >
-                    <div class="flex flex-col navbar-brand-text">
-                        <h1 class="font-bold text-lg gradient-text">Sekretariat Daerah</h1>
-                        <p class="text-sm text-gray-600">Provinsi Kalimantan Timur</p>
-                    </div>
+                        class="h-12 w-auto">
+                        <div class="flex flex-col navbar-brand-text">
+                            <h1 class="font-bold text-lg gradient-text">Sekretariat Daerah</h1>
+                            <p class="text-sm text-gray-600">Provinsi Kalimantan Timur</p>
+                        </div>
                 </div>
             </div>
 
@@ -418,54 +380,13 @@
                         </div>
                     </div>
                 </div>
-
-
-        <!-- Theme Toggle Button -->
-        <button class="theme-toggle" id="themeToggle" aria-label="Toggle Theme">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 sun-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-            </svg>
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 moon-icon hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-            </svg>
-        </button>
+            </div>
+        </div>
 
         <!-- AOS Animation Script -->
         <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
         <script>
-            // Theme management
-            function initializeTheme() {
-                const savedTheme = localStorage.getItem('theme') || 'light';
-                document.documentElement.setAttribute('data-theme', savedTheme);
-                document.body.classList.remove('light', 'dark');
-                document.body.classList.add(savedTheme);
-                updateThemeIcons(savedTheme);
-            }
-
-            function updateThemeIcons(theme) {
-                const sunIcon = document.querySelector('.sun-icon');
-                const moonIcon = document.querySelector('.moon-icon');
-                if (theme === 'dark') {
-                    sunIcon.classList.add('hidden');
-                    moonIcon.classList.remove('hidden');
-                } else {
-                    sunIcon.classList.remove('hidden');
-                    moonIcon.classList.add('hidden');
-                }
-            }
-
-            function toggleTheme() {
-                const isDark = document.body.classList.contains('dark');
-                const newTheme = isDark ? 'light' : 'dark';
-                document.documentElement.setAttribute('data-theme', newTheme);
-                document.body.classList.remove('light', 'dark');
-                document.body.classList.add(newTheme);
-                localStorage.setItem('theme', newTheme);
-                updateThemeIcons(newTheme);
-
-                // Dispatch a custom event for theme change
-                window.dispatchEvent(new CustomEvent('themeChanged', { detail: newTheme }));
-            }
+           
 
             document.addEventListener('DOMContentLoaded', function() {
                 // Initialize AOS
@@ -474,15 +395,7 @@
                     once: true,
                 });
 
-                // Initialize theme
-                initializeTheme();
                 
-                // Theme toggle button click handler
-                const themeToggle = document.getElementById('themeToggle');
-                if (themeToggle) {
-                    themeToggle.addEventListener('click', toggleTheme);
-                }
-
                 // Parallax Effect
                 window.addEventListener('scroll', function() {
                     const scrolled = window.pageYOffset;

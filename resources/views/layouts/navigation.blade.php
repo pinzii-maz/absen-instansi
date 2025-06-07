@@ -1,4 +1,4 @@
-<nav x-data="{ open: false }" class="bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="bg-dark border-b border-gray-100">
     
     <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -7,16 +7,14 @@
 
                 
                 <!-- Logo -->
-                <div class="shrink-0 flex items-center">
-                    <a href="{{ route('dashboard') }}">
+                <div class="shrink-0 flex items-center w-auto h-auto">
                         <img 
                             src="{{ asset('images/kaltim.png') }}" 
                             alt="Logo SETDA Kaltim" 
                             class="h-12 w-auto"
                         >
-                    </a>
-                    <div class="flex flex-col navbar-brand-text">
-                        <h1 class="font-bold text-lg gradient-text">Sekretariat Daerah</h1>
+                    <div class="flex flex-col navbar-brand-text ml-4">
+                        <h1 class="font-bold text-lg text-blue-600 gradient-text">Sekretariat Daerah</h1>
                         <p class="text-sm text-gray-600">Provinsi Kalimantan Timur</p>
                     </div>
                 </div>
@@ -53,18 +51,6 @@
                         class="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-50"
                         style="display: none;">
                         <div class="py-1">
-                            <a href="{{ route('profile.edit') }}"
-                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition duration-150 ease-in-out">
-                                <div class="flex items-center">
-                                    <svg class="h-5 w-5 mr-2 text-gray-400" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                    </svg>
-                                    Profil Saya
-                                </div>
-                            </a>
-
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
                                 <button type="submit"

@@ -95,7 +95,7 @@
         }
         
         .form-input:focus {
-            background: rgba(19, 19, 19, 0.95) !important;
+            background: rgba(255, 255, 255, 0.95) !important;
             border-color: rgba(37, 99, 235, 0.5) !important;
             box-shadow: 0 0 15px rgba(37, 99, 235, 0.2) !important;
             transform: translateY(-2px);
