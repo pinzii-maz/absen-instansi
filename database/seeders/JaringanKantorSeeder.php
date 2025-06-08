@@ -11,11 +11,14 @@ class JaringanKantorSeeder extends Seeder
     /**
      * Run the database seeds.
      */
-    public function run(): void
-    {
-        JaringanKantor::updateOrCreate(
-            ['name' => 'wifi kantor pusat'],
-            ['ssid' => 'semanggi putra 2', 'ip_cidr' => '192.168.1.0/24']
-        );
-    }
+        public function run(): void
+        {
+            JaringanKantor::updateOrCreate(
+                ['name' => 'Semanggi Putra 2'],
+        [ // Hanya satu array untuk data
+            'ssid' => 'semanggi putra 2',
+            'ip_cidr' => '192.168.1.0/24'
+        ]
+            );
+        }
 }

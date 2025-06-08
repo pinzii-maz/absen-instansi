@@ -1,14 +1,14 @@
 <?php
     namespace App\Helpers;
 
-    use Illuminate\Support\Facades\Request; 
+    use Illuminate\Http\Request;
 
     class IpHelper
     {
         public static function getClientIp(Request $request): ?string {
             $headers = ['HTTP_CLIENT_IP', 'HTTP_X_FORWARDED_FOR', 'HTTP_X_FORWARDED', 'HTTP_FORWARDED_FOR', 'HTTP_FORWARDED', 'REMOTE_ADDR'];
             foreach ($headers as $header) {
-                if ($serverIp = $request->server($header)) {
+                if ($serverIp = $request->server($header)) {    
                     $ip = trim(explode(',', $serverIp)[0]);
                     if (filter_var($ip, FILTER_VALIDATE_IP)) {
                         return $ip;

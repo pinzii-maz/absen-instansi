@@ -30,31 +30,34 @@
             top: -50%;
             left: -50%;
             background: radial-gradient(circle, rgba(37, 99, 235, 0.1) 0%, rgba(13, 17, 23, 0) 50%),
-                        radial-gradient(circle at 70% 30%, rgba(29, 78, 216, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.1) 0%, transparent 50%);
+                radial-gradient(circle at 70% 30%, rgba(29, 78, 216, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(30, 64, 175, 0.1) 0%, transparent 50%);
             animation: rotate 30s linear infinite;
             z-index: 0;
         }
 
         .dark .auth-container::before {
             background: radial-gradient(circle, rgba(96, 165, 250, 0.2) 0%, rgba(13, 17, 23, 0) 50%),
-                        radial-gradient(circle at 70% 30%, rgba(96, 165, 250, 0.2) 0%, transparent 50%),
-                        radial-gradient(circle at 30% 70%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
+                radial-gradient(circle at 70% 30%, rgba(96, 165, 250, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(96, 165, 250, 0.2) 0%, transparent 50%);
         }
 
-        .form-input, .form-select {
+        .form-input,
+        .form-select {
             background: rgba(255, 255, 255, 0.9) !important;
             border: 1px solid rgba(37, 99, 235, 0.2) !important;
             color: var(--text-light) !important;
         }
 
-        .dark .form-input, .dark .form-select {
+        .dark .form-input,
+        .dark .form-select {
             background: rgba(31, 41, 55, 0.9) !important;
             border: 1px solid rgba(96, 165, 250, 0.2) !important;
             color: var(--text-dark) !important;
         }
 
-        .dark .form-input::placeholder, .dark .form-select {
+        .dark .form-input::placeholder,
+        .dark .form-select {
             color: rgba(156, 163, 175, 0.6);
         }
 
@@ -95,11 +98,25 @@
         }
 
         @keyframes floating {
-            0% { transform: translate(0, 0px) rotate(0deg); }
-            25% { transform: translate(5px, 10px) rotate(1deg); }
-            50% { transform: translate(0, 15px) rotate(0deg); }
-            75% { transform: translate(-5px, 10px) rotate(-1deg); }
-            100% { transform: translate(0, 0px) rotate(0deg); }
+            0% {
+                transform: translate(0, 0px) rotate(0deg);
+            }
+
+            25% {
+                transform: translate(5px, 10px) rotate(1deg);
+            }
+
+            50% {
+                transform: translate(0, 15px) rotate(0deg);
+            }
+
+            75% {
+                transform: translate(-5px, 10px) rotate(-1deg);
+            }
+
+            100% {
+                transform: translate(0, 0px) rotate(0deg);
+            }
         }
 
         .section-fade {
@@ -186,7 +203,7 @@
             .register-title {
                 font-size: 2rem;
             }
-            
+
             .auth-form {
                 padding: 1.5rem !important;
                 margin: 1rem;
@@ -197,7 +214,7 @@
             .register-title {
                 font-size: 1.75rem;
             }
-            
+
             .auth-form {
                 padding: 1rem !important;
                 margin: 0.5rem;
@@ -248,86 +265,90 @@
             <div class="w-full max-w-xl" data-aos="fade-up">
                 <!-- Logo and Title -->
                 <div class="text-center mb-8">
-                    <img src="{{ asset('images/kaltim.png') }}" alt="Logo" class="mx-auto h-24 w-auto mb-4 floating">
+                    <img src="{{ asset('images/kaltim.png') }}" alt="Logo"
+                        class="mx-auto h-24 w-auto mb-4 floating">
                     <h2 class="text-4xl font-bold register-title mb-2">Register</h2>
                     <p class="text-gray-400 text-lg">Buat akun baru</p>
                 </div>
 
-                <form method="POST" action="{{ route('register') }}" class=" grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-min">
+                <form method="POST" action="{{ route('register') }}"
+                    class=" grid grid-cols-1 md:grid-cols-2 gap-6 auto-rows-min">
                     @csrf
 
-                    <!-- Jabatan (Left Column, Row 1) -->
+                    <div class="space-y-2">
+                        <x-input-label for="divisi_id" :value="__('Divisi')" class="text-gray-300 text-lg" />
+                        <select id="divisi_id" name="divisi_id" class="block w-full form-select rounded-lg text-lg py-3"
+                            required>
+                            <option value="">Pilih Divisi</option>
+                            @foreach ($divisi as $item)
+                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                            @endforeach
+                        </select>
+                        <x-input-error :messages="$errors->get('divisi_id')" class="mt-2" />
+                    </div>
+
                     <div class="space-y-2">
                         <x-input-label for="role" :value="__('Jabatan')" class="text-gray-300 text-lg" />
-                        <select id="role" name="role" class="block w-full form-select rounded-lg text-lg py-3" required>
+                        <select id="role" name="role" class="block w-full form-select rounded-lg text-lg py-3"
+                            required>
                             <option value="">Pilih Jabatan</option>
                             <option value="kepala_biro">Kepala Biro</option>
-                            <option value="kepala_bagian_perencanaan_dan_kepegawaian">Kepala Bagian Perencanaan dan Kepegawaian</option>
+                            <option value="kepala_bagian_perencanaan_dan_kepegawaian">Kepala Bagian Perencanaan dan
+                                Kepegawaian</option>
                             <option value="kepala_bagian_protokol">Kepala Bagian Protokol</option>
-                            <option value="kepala_bagian_materi_dan_komunikasi_pimpinan">Kepala Bagian Materi dan Komunikasi Pimpinan</option>
+                            <option value="kepala_bagian_materi_dan_komunikasi_pimpinan">Kepala Bagian Materi dan
+                                Komunikasi Pimpinan</option>
                             <option value="kepala_sub_bagian_tata_usaha">Kepala Sub Bagian Tata Usaha</option>
                             <option value="analisi_kebijakan_ahli_muda">Analisi Kebijakan Ahli Muda</option>
-                            <option value="pranata_hubungan_masyarakat_ahli_muda">Pranata Hubungan Masyarakat Ahli Muda</option>
+                            <option value="pranata_hubungan_masyarakat_ahli_muda">Pranata Hubungan Masyarakat Ahli Muda
+                            </option>
                             <option value="pelaksana">Pelaksana</option>
                         </select>
                         <x-input-error :messages="$errors->get('role')" class="mt-2" />
                     </div>
 
-                    <!-- Nama Lengkap (Right Column, Row 1) -->
                     <div class="space-y-2">
                         <x-input-label for="name" :value="__('Nama Lengkap')" class="text-gray-300 text-lg" />
-                        <x-text-input id="name" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="text" name="name" :value="old('name')" required placeholder="Masukkan nama lengkap" />
+                        <x-text-input id="name" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow"
+                            type="text" name="name" :value="old('name')" required
+                            placeholder="Masukkan nama lengkap" />
                         <x-input-error :messages="$errors->get('name')" class="mt-2" />
                     </div>
 
-                    <!-- NIP (Left Column, Row 2) -->
                     <div class="space-y-2">
                         <x-input-label for="nip" :value="__('NIP')" class="text-gray-300 text-lg" />
-                        <x-text-input id="nip" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="text" name="nip" :value="old('nip')" placeholder="Masukkan NIP (opsional)" />
-                        <p class="mt-0 text-gray-400 text-sm italic">Jika anda memiliki NIP tolong di isi, jika tidak ada anda bisa lewati</p>
+                        <x-text-input id="nip" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow"
+                            type="text" name="nip" :value="old('nip')" placeholder="Masukkan NIP (opsional)" />
+                        <p class="mt-0 text-gray-400 text-sm italic">Jika anda memiliki NIP tolong di isi, jika tidak
+                            ada anda bisa lewati</p>
                         <x-input-error :messages="$errors->get('nip')" class="mt-2" />
                     </div>
 
-                    <!-- Password (Right Column, Row 2) -->
-                    <div class="space-y-2">
-                        <x-input-label for="password" :value="__('Password')" class="text-gray-300 text-lg" />
-                        <x-text-input id="password" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="password" name="password" required placeholder="••••••••" />
-                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
-                    </div>
-
-                    <!-- Email Address (Left Column, Row 3) -->
                     <div class="space-y-2 mt-0">
                         <x-input-label for="email" :value="__('Email')" class="text-gray-300 text-lg" />
-                        <x-text-input id="email" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="email" name="email" :value="old('email')" required placeholder="nama@email.com" />
+                        <x-text-input id="email" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow"
+                            type="email" name="email" :value="old('email')" required placeholder="nama@email.com" />
                         <x-input-error :messages="$errors->get('email')" class="mt-2" />
                     </div>
 
-                    <!-- Konfirmasi Password (Right Column, Row 3) -->
+                    <div class="space-y-2">
+                        <x-input-label for="password" :value="__('Password')" class="text-gray-300 text-lg" />
+                        <x-text-input id="password" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow"
+                            type="password" name="password" required placeholder="••••••••" />
+                        <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                    </div>
+
                     <div class="space-y-2">
                         <x-input-label for="password_confirmation" :value="__('Konfirmasi Password')" class="text-gray-300 text-lg" />
-                        <x-text-input id="password_confirmation" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="password" name="password_confirmation" required placeholder="••••••••" />
+                        <x-text-input id="password_confirmation"
+                            class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="password"
+                            name="password_confirmation" required placeholder="••••••••" />
                         <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
                     </div>
 
-                    <!-- Dynamic Fields for Pelaksana (Spans two columns) -->
-                    <div id="pelaksanaFields" class="hidden space-y-6 section-fade md:col-span-2">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <x-input-label for="unit_kerja" :value="__('Unit Kerja')" class="text-gray-300 text-lg" />
-                                <x-text-input id="unit_kerja" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="text" name="unit_kerja" :value="old('unit_kerja')" placeholder="Masukkan unit kerja" />
-                                <x-input-error :messages="$errors->get('unit_kerja')" class="mt-2" />
-                            </div>
-                            <div class="space-y-2">
-                                <x-input-label for="jabatan_fungsional" :value="__('Jabatan Fungsional')" class="text-gray-300 text-lg" />
-                                <x-text-input id="jabatan_fungsional" class="block w-full form-input rounded-lg text-lg py-3 px-4 glow" type="text" name="jabatan_fungsional" :value="old('jabatan_fungsional')" placeholder="Masukkan jabatan fungsional" />
-                                <x-input-error :messages="$errors->get('jabatan_fungsional')" class="mt-2" />
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Register Button (Spans two columns and centered) -->
                     <div class="flex justify-center pt-4 md:col-span-2">
-                        <button type="submit" class="w-full md:w-1/2 auth-button text-white py-4 rounded-lg font-semibold text-lg transition">
+                        <button type="submit"
+                            class="w-full md:w-1/2 auth-button text-white py-4 rounded-lg font-semibold text-lg transition">
                             {{ __('Register') }}
                         </button>
                     </div>
@@ -337,7 +358,8 @@
                 <div class="text-center mt-6">
                     <p class="text-gray-400">
                         {{ __('Sudah punya akun?') }}
-                        <a href="{{ route('login') }}" class="text-blue-400 hover:text-blue-300 hover:underline transition-colors font-medium">
+                        <a href="{{ route('login') }}"
+                            class="text-blue-400 hover:text-blue-300 hover:underline transition-colors font-medium">
                             {{ __('Login disini') }}
                         </a>
                     </p>
@@ -363,23 +385,23 @@
                 for (let i = 0; i < numberOfParticles; i++) {
                     const particle = document.createElement('div');
                     particle.className = 'particle';
-                    
+
                     // Random position
                     particle.style.left = Math.random() * 100 + '%';
                     particle.style.top = Math.random() * 100 + '%';
-                    
+
                     // Random size
                     const size = Math.random() * 3;
                     particle.style.width = size + 'px';
                     particle.style.height = size + 'px';
-                    
+
                     // Random opacity
                     particle.style.opacity = Math.random() * 0.5 + 0.2;
-                    
+
                     // Animation
                     particle.style.animation = `floating ${Math.random() * 3 + 2}s ease-in-out infinite`;
                     particle.style.animationDelay = `${Math.random() * 2}s`;
-                    
+
                     particlesContainer.appendChild(particle);
                 }
             }
@@ -402,7 +424,7 @@
                 } else {
                     pelaksanaFields.style.opacity = '0';
                     setTimeout(() => {
-                    pelaksanaFields.classList.add('hidden');
+                        pelaksanaFields.classList.add('hidden');
                     }, 300);
                     // Remove required when hidden
                     document.getElementById('unit_kerja').required = false;

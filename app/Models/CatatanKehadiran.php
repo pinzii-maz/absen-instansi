@@ -29,8 +29,8 @@ class CatatanKehadiran extends Model
     protected $casts = [
         'tanggal_masuk' => 'date',
         'tanggal_selesai_izin' => 'date',
-        'jam_masuk' => 'time',
-        'jam_pulang' => 'time',
+        'jam_masuk' => 'date',
+        'jam_pulang' => 'date',
     ];
 
     public function user()
