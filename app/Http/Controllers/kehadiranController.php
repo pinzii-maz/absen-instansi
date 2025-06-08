@@ -22,7 +22,7 @@ class kehadiranController extends Controller
         $currentMonthStart = Carbon::now()->startOfMonth();
         $currentMonthEnd = Carbon::now()->endOf('month');
 
-         $hasAttendedToday = CatatanKehadiran::where('user_id', $user->id)
+        $hasAttendedToday = CatatanKehadiran::where('user_id', $user->id)
             ->where(function ($query) use ($today) {
                 $query->whereDate('tanggal_masuk', $today) // Untuk absen harian
                       ->orWhere(function($q) use ($today) { // Untuk izin multi-hari
@@ -32,7 +32,7 @@ class kehadiranController extends Controller
             })
             ->exists();
 
-             $hasClockedOutToday = CatatanKehadiran::where('user_id', $user->id)
+        $hasClockedOutToday = CatatanKehadiran::where('user_id', $user->id)
             ->whereDate('tanggal_masuk', $today)
             ->whereNotNull('jam_pulang')
             ->exists();
@@ -47,11 +47,8 @@ class kehadiranController extends Controller
             })
             ->count();
 
-            $jamMasukKantor = '08:00:00'; // Definisikan jam masuk kantor
-            $totalMasukBulanIni = $totalAttendance; // Asumsi $totalAttendance sudah menghitung 'H'
-
-             $jamMasukKantor = '08:00:00'; // Definisikan jam masuk kantor
-        $totalMasukBulanIni = $totalAttendance; // Asumsi $totalAttendance sudah menghitung 'H'
+        $jamMasukKantor = '08:00:00';
+        $totalMasukBulanIni = $totalAttendance;
 
         $totalTepatWaktu = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
@@ -63,8 +60,15 @@ class kehadiranController extends Controller
         
         $onTimePercentage = ($totalMasukBulanIni > 0) ? round(($totalTepatWaktu / $totalMasukBulanIni) * 100) : 0;
 
-        return view('dashboard', compact('totalAttendance', 'onTimePercentage'));
+        // Get leave requests for the current user
+        $leaveRequests = CatatanKehadiran::where('user_id', $user->id)
+            ->whereNotNull('tanggal_selesai_izin') // Only get leave requests
+            ->with('jenisKehadiran')
+            ->orderBy('created_at', 'desc')
+            ->take(5) // Show only the last 5 requests
+            ->get();
 
+        return view('dashboard', compact('totalAttendance', 'onTimePercentage', 'leaveRequests'));
     }
 
      public function submitLeave(Request $request)
