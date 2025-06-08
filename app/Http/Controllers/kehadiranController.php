@@ -22,7 +22,7 @@ class kehadiranController extends Controller
         $currentMonthStart = Carbon::now()->startOfMonth();
         $currentMonthEnd = Carbon::now()->endOf('month');
 
-         $hasAttendedToday = CatatanKehadiran::where('user_id', $user->id)
+        $hasAttendedToday = CatatanKehadiran::where('user_id', $user->id)
             ->where(function ($query) use ($today) {
                 $query->whereDate('tanggal_masuk', $today) // Untuk absen harian
                       ->orWhere(function($q) use ($today) { // Untuk izin multi-hari
@@ -47,11 +47,8 @@ class kehadiranController extends Controller
             })
             ->count();
 
-            $jamMasukKantor = '08:00:00'; // Definisikan jam masuk kantor
-            $totalMasukBulanIni = $totalAttendance; // Asumsi $totalAttendance sudah menghitung 'H'
-
-             $jamMasukKantor = '08:00:00'; // Definisikan jam masuk kantor
-        $totalMasukBulanIni = $totalAttendance; // Asumsi $totalAttendance sudah menghitung 'H'
+        $jamMasukKantor = '08:00:00';
+        $totalMasukBulanIni = $totalAttendance;
 
         $totalTepatWaktu = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
