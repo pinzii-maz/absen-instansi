@@ -60,7 +60,14 @@ class kehadiranController extends Controller
         
         $onTimePercentage = ($totalMasukBulanIni > 0) ? round(($totalTepatWaktu / $totalMasukBulanIni) * 100) : 0;
 
-        return view('dashboard', compact('totalAttendance', 'onTimePercentage'));
+        $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C', 'DL', 'TL'])->get();
+
+
+         return view('dashboard', compact(
+        'totalAttendance', 
+        'onTimePercentage', 
+        'jenisKehadiran'  // <--- Variabel yang dibutuhkan view sekarang sudah dikirim
+    ));
     }
 
     // ✅ Method absenMasuk yang hilang
@@ -207,6 +214,8 @@ class kehadiranController extends Controller
     // ✅ Method izin yang hilang
     public function izin()
     {
+        dd('Method Izin Dijalankan!');
+        
         $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C'])->get(); // Sakit, Izin, Cuti
         return view('kehadiran.izin', compact('jenisKehadiran'));
     }

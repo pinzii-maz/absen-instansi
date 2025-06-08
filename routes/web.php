@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\KehadiranController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -23,14 +24,14 @@ Route::get('/', function () {
 // })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', [\App\Http\Controllers\kehadiranController::class, 'dashboard'])->name('dashboard');
+    Route::get('/dashboard', [\App\Http\Controllers\KehadiranController::class, 'dashboard'])->name('dashboard');
     
-    Route::post('/kehadiran/masuk', [\App\Http\Controllers\kehadiranController::class, 'absenMasuk'])->name('kehadiran.masuk');
-    Route::post('/kehadiran/pulang', [\App\Http\Controllers\kehadiranController::class, 'absenPulang'])->name('kehadiran.pulang');
-    Route::get('/kehadiran/izin', [\App\Http\Controllers\kehadiranController::class, 'izin'])->name('kehadiran.izin');
+    Route::post('/kehadiran/masuk', [KehadiranController::class, 'absenMasuk'])->name('kehadiran.masuk');
+    Route::post('/kehadiran/pulang', [KehadiranController::class, 'absenPulang'])->name('kehadiran.pulang');
+    Route::get('/kehadiran/izin', [KehadiranController::class, 'izin'])->name('kehadiran.izin');
     
     
-    Route::post('/kehadiran/izin', [\App\Http\Controllers\kehadiranController::class, 'submitLeave'])->name('kehadiran.submit-leave');
+    Route::post('/kehadiran/izin', [KehadiranController::class, 'submitLeave'])->name('kehadiran.submit-leave');
 });
 
 Route::middleware('auth')->group(function () {

@@ -9,7 +9,8 @@
         style="background: linear-gradient(135deg, #f6f8fc 0%, #e9edf5 100%);">
         <div class="max-w-7xl mx-auto">
             <!-- Welcome and Attendance Section -->
-            <div class="bg-white rounded-xl shadow-xl mb-6 sm:mb-8 transform transition-all duration-300 hover:shadow-2xl">
+            <div
+                class="bg-white rounded-xl shadow-xl mb-6 sm:mb-8 transform transition-all duration-300 hover:shadow-2xl">
                 <div class="p-4 sm:p-8">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 items-center">
                         <!-- Left side - Illustration -->
@@ -38,13 +39,16 @@
                             </div>
 
                             <!-- Statistics Cards -->
-                            <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8" data-aos="fade-up" data-aos-delay="200">
+                            <div class="grid grid-cols-2 gap-3 sm:gap-4 mt-6 sm:mt-8" data-aos="fade-up"
+                                data-aos-delay="200">
                                 <div class="stats-card p-3 sm:p-4 rounded-lg shadow-lg card-hover">
-                                    <div class="text-2xl sm:text-3xl font-bold text-blue-600">{{ $totalAttendance ?? 0 }}</div>
+                                    <div class="text-2xl sm:text-3xl font-bold text-blue-600">
+                                        {{ $totalAttendance ?? 0 }}</div>
                                     <div class="text-xs sm:text-sm text-gray-600">Total Kehadiran Bulan Ini</div>
                                 </div>
                                 <div class="stats-card p-3 sm:p-4 rounded-lg shadow-lg card-hover">
-                                    <div class="text-2xl sm:text-3xl font-bold text-blue-600">{{ $onTimePercentage ?? 0 }}%</div>
+                                    <div class="text-2xl sm:text-3xl font-bold text-blue-600">
+                                        {{ $onTimePercentage ?? 0 }}%</div>
                                     <div class="text-xs sm:text-sm text-gray-600">Tepat Waktu</div>
                                 </div>
                             </div>
@@ -89,15 +93,16 @@
                                 <div id="wifiStatus"
                                     class="mt-3 sm:mt-4 bg-white rounded-lg p-3 sm:p-4 shadow-md border border-gray-200">
                                     <div class="flex items-center">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-500 animate-spin" fill="none"
-                                            viewBox="0 0 24 24">
+                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-500 animate-spin"
+                                            fill="none" viewBox="0 0 24 24">
                                             <circle class="opacity-25" cx="12" cy="12" r="10"
                                                 stroke="currentColor" stroke-width="4"></circle>
                                             <path class="opacity-75" fill="currentColor"
                                                 d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
                                             </path>
                                         </svg>
-                                        <span class="text-sm sm:text-base text-gray-700">Memeriksa koneksi WiFi...</span>
+                                        <span class="text-sm sm:text-base text-gray-700">Memeriksa koneksi
+                                            WiFi...</span>
                                     </div>
                                 </div>
                             </div>
@@ -107,7 +112,8 @@
             </div>
 
             <!-- Employee Information Section -->
-            <div class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl mb-6 sm:mb-8">
+            <div
+                class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl mb-6 sm:mb-8">
                 <div class="p-4 sm:p-8">
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6 sm:mb-8 flex items-center">
                         <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-gray-800" fill="none" stroke="currentColor"
@@ -124,17 +130,20 @@
                             <div
                                 class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
                                 <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Nama Lengkap</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->name }}</p>
+                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->name }}
+                                </p>
                             </div>
                             <div
                                 class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
                                 <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Email</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->email }}</p>
+                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->email }}
+                                </p>
                             </div>
                             <div
                                 class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
                                 <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">NIP</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->nip }}</p>
+                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->nip }}
+                                </p>
                             </div>
                         </div>
 
@@ -151,11 +160,13 @@
                                 <div
                                     class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
                                     <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Unit Kerja</h4>
-                                    <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->unit_kerja }}</p>
+                                    <p class="text-base sm:text-lg font-semibold text-gray-800">
+                                        {{ auth()->user()->unit_kerja }}</p>
                                 </div>
                                 <div
                                     class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                    <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Jabatan Fungsional</h4>
+                                    <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Jabatan Fungsional
+                                    </h4>
                                     <p class="text-base sm:text-lg font-semibold text-gray-800">
                                         {{ auth()->user()->jabatan_fungsional }}</p>
                                 </div>
@@ -169,8 +180,11 @@
             <div class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl">
                 <div class="p-4 sm:p-8">
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6 sm:mb-8 flex items-center">
-                        <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-gray-800" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-gray-800" fill="none" stroke="currentColor"
+                            viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2">
+                            </path>
                         </svg>
                         Status Pengajuan Izin
                     </h3>
@@ -179,10 +193,18 @@
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
-                                     <th class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Jenis Izin</th>
-                                    <th class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Keterangan</th>
+                                    <th
+                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Jenis Izin</th>
+                                    <th
+                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Tanggal</th>
+                                    <th
+                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Status</th>
+                                    <th
+                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                        Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -192,18 +214,20 @@
                                             {{ $request->jenisKehadiran->name }}
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ \Carbon\Carbon::parse($request->tanggal_masuk)->format('d M Y') }} - 
+                                            {{ \Carbon\Carbon::parse($request->tanggal_masuk)->format('d M Y') }} -
                                             {{ \Carbon\Carbon::parse($request->tanggal_selesai_izin)->format('d M Y') }}
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                                             @php
-                                                $statusClass = [
-                                                    'proses' => 'bg-yellow-100 text-yellow-800',
-                                                    'disetujui' => 'bg-green-100 text-green-800',
-                                                    'ditolak' => 'bg-red-100 text-red-800'
-                                                ][$request->status] ?? 'bg-gray-100 text-gray-800';
+                                                $statusClass =
+                                                    [
+                                                        'proses' => 'bg-yellow-100 text-yellow-800',
+                                                        'disetujui' => 'bg-green-100 text-green-800',
+                                                        'ditolak' => 'bg-red-100 text-red-800',
+                                                    ][$request->status] ?? 'bg-gray-100 text-gray-800';
                                             @endphp
-                                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
+                                            <span
+                                                class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
                                                 {{ ucfirst($request->status) }}
                                             </span>
                                         </td>
@@ -213,7 +237,8 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="4"
+                                            class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
                                             Belum ada pengajuan izin
                                         </td>
                                     </tr>
@@ -241,20 +266,25 @@
 
             <div class="mb-6 sm:mb-8">
                 <h3 class="text-xl sm:text-2xl font-bold text-gray-800">Ajukan Izin</h3>
-                <p class="text-sm sm:text-base text-gray-600 mt-1">Silakan lengkapi form berikut untuk mengajukan izin</p>
+                <p class="text-sm sm:text-base text-gray-600 mt-1">Silakan lengkapi form berikut untuk mengajukan izin
+                </p>
             </div>
 
             <form id="izinForm" class="space-y-4 sm:space-y-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Jenis Izin</label>
                     <select name="jenis_izin"
-                        class="block w-full rounded-lg border border-gray-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-gray-700 focus:border-blue-500 focus:ring-blue-500">
-                        <option value=""disabled selected>Pilih jenis izin</option>
-                        <option value="sakit">Sakit</option>
-                        <option value="dinas_luar">Dinas Luar</option>
-                        <option value="cuti">Tugas Luar</option>
-                        <option value="cuti">Cuti</option>
-                        <option value="lainnya">Lainnya</option>
+                        class="block w-full rounded-lg border border-gray-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-gray-700 focus:border-blue-500 focus:ring-blue-500"
+                        required>
+
+                        <option value="" disabled selected>Pilih jenis izin</option>
+
+                        {{-- Loop ini akan membuat option secara otomatis dari database --}}
+                        @foreach ($jenisKehadiran as $jenis)
+                            {{-- value akan menjadi 'S', 'I', 'C' (sesuai database), dan teksnya adalah nama lengkapnya --}}
+                            <option value="{{ $jenis->code }}">{{ $jenis->name }}</option>
+                        @endforeach
+
                     </select>
                 </div>
 
@@ -284,8 +314,8 @@
                     <div
                         class="mt-1 flex justify-center px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-6 border-2 border-gray-300 border-dashed rounded-lg">
                         <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-gray-400" stroke="currentColor" fill="none"
-                                viewBox="0 0 48 48">
+                            <svg class="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-gray-400" stroke="currentColor"
+                                fill="none" viewBox="0 0 48 48">
                                 <path
                                     d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
@@ -542,7 +572,7 @@
         // Update file upload handling
         const fileUploadInput = document.getElementById('file-upload');
         const fileDropZone = fileUploadInput.closest('.border-dashed');
-        
+
         if (fileUploadInput && fileDropZone) {
             // Handle file selection
             fileUploadInput.addEventListener('change', function() {
@@ -583,7 +613,7 @@
                 const dt = e.dataTransfer;
                 const files = dt.files;
                 fileUploadInput.files = files;
-                
+
                 const fileName = files[0] ? files[0].name : 'atau drag and drop';
                 const fileDropText = fileUploadInput.closest('.flex.text-sm.text-gray-600').querySelector('p.pl-1');
                 if (fileDropText) fileDropText.textContent = fileName;
