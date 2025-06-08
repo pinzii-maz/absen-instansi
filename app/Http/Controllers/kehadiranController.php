@@ -62,11 +62,21 @@ class kehadiranController extends Controller
 
         $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C', 'DL', 'TL'])->get();
 
+        $leaveRequests = CatatanKehadiran::where('user_id', $user->id)
+        ->whereHas('jenisKehadiran', function ($query) {
+            
+            $query->whereNotIn('code', ['H', 'P']);
+        })
+        ->with('jenisKehadiran') 
+        ->latest() 
+        ->take(5) 
+        ->get();
 
-         return view('dashboard', compact(
+        return view('dashboard', compact(
         'totalAttendance', 
         'onTimePercentage', 
-        'jenisKehadiran'  // <--- Variabel yang dibutuhkan view sekarang sudah dikirim
+        'jenisKehadiran',
+        'leaveRequests'
     ));
     }
 

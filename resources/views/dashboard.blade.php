@@ -194,41 +194,43 @@
                             <thead class="bg-gray-50">
                                 <tr>
                                     <th
-                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Jenis Izin</th>
                                     <th
-                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Tanggal</th>
                                     <th
-                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status</th>
                                     <th
-                                        class="px-4 sm:px-6 py-3 text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
                                         Keterangan</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                @forelse($leaveRequests ?? [] as $request)
+                                {{-- Pastikan nama variabelnya '$leaveRequests' --}}
+                                @forelse($leaveRequests as $request)
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                             {{ $request->jenisKehadiran->name }}
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            {{ \Carbon\Carbon::parse($request->tanggal_masuk)->format('d M Y') }} -
-                                            {{ \Carbon\Carbon::parse($request->tanggal_selesai_izin)->format('d M Y') }}
+                                            {{ $request->tanggal_masuk->format('d M Y') }} -
+                                            {{ $request->tanggal_selesai_izin ? $request->tanggal_selesai_izin->format('d M Y') : '' }}
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                                             @php
+                                                // PERBAIKI: Gunakan 'status_izin' dan 'menunggu'
                                                 $statusClass =
                                                     [
-                                                        'proses' => 'bg-yellow-100 text-yellow-800',
+                                                        'menunggu' => 'bg-yellow-100 text-yellow-800', // Ganti 'proses' menjadi 'menunggu'
                                                         'disetujui' => 'bg-green-100 text-green-800',
                                                         'ditolak' => 'bg-red-100 text-red-800',
-                                                    ][$request->status] ?? 'bg-gray-100 text-gray-800';
+                                                    ][$request->status_izin] ?? 'bg-gray-100 text-gray-800'; // Ganti $request->status menjadi $request->status_izin
                                             @endphp
                                             <span
                                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                                {{ ucfirst($request->status) }}
+                                                {{ ucfirst($request->status_izin) }} {{-- Ganti $request->status menjadi $request->status_izin --}}
                                             </span>
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 text-sm text-gray-900 break-words">

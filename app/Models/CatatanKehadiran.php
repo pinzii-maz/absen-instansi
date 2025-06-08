@@ -24,6 +24,8 @@ class CatatanKehadiran extends Model
         'keterangan_izin',
         'file_pendukung_izin',
         'catatan_tambahan',
+        'status_izin',  
+        'approved_by',
     ];
 
     protected $casts = [
@@ -46,5 +48,9 @@ class CatatanKehadiran extends Model
     public function jenisKehadiranPulang()
     {
         return $this->belongsTo(JenisKehadiran::class, 'jenis_kehadiran_id_pulang');
+    }
+
+    public function approver() {
+        return $this->belongsTo(User::class, 'approved_by');
     }
 }
