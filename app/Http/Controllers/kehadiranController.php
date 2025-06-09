@@ -222,78 +222,80 @@ class kehadiranController extends Controller
     }
 
     // ✅ Method izin yang hilang
-    public function izin()
-    {
-        dd('Method Izin Dijalankan!');
-        
-        $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C'])->get(); // Sakit, Izin, Cuti
-        return view('kehadiran.izin', compact('jenisKehadiran'));
-    }
-
-     public function submitLeave(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'jenis_izin' => 'required|string|exists:jenis_kehadiran,code', // Pastikan kode jenis izin ada di tabel
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'keterangan' => 'required|string|max:1000',
-            'surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120', // max 5MB
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+        public function izin()
+        {
+            dd('Method Izin Dijalankan!');
+            
+            $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C'])->get(); // Sakit, Izin, Cuti
+            return view('kehadiran.izin', compact('jenisKehadiran'));
         }
 
-        $user = Auth::user();
-        $clientIp = $request->ip();
-        $now = Carbon::now();
-        
-        $jenisKehadiran = JenisKehadiran::where('code', $request->input('jenis_izin'))->first();
-        if (!$jenisKehadiran) { // Seharusnya sudah divalidasi oleh 'exists' rule
-            return response()->json(['success' => false, 'message' => 'Jenis izin tidak valid.'], 400);
-        }
+        public function submitLeave(Request $request)
+        {
+            // dd($request->all());
 
-        $startDate = Carbon::parse($request->input('tanggal_mulai'));
-        $endDate = Carbon::parse($request->input('tanggal_selesai'));
+            $validator = Validator::make($request->all(), [
+                'jenis_izin' => 'required|string|exists:jenis_kehadiran,code', // Pastikan kode jenis izin ada di tabel
+                'tanggal_mulai' => 'required|date',
+                'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+                'keterangan' => 'required|string|max:1000',
+                'surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120', // max 5MB
+            ]);
 
-        $overlappingRecord = CatatanKehadiran::where('user_id', $user->id)
+            if ($validator->fails()) {
+                return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
+            }
+
+            $user = Auth::user();
+            $clientIp = $request->ip();
+            $now = Carbon::now();
+            
+            $jenisKehadiran = JenisKehadiran::where('code', $request->input('jenis_izin'))->first();
+            if (!$jenisKehadiran) { // Seharusnya sudah divalidasi oleh 'exists' rule
+                return response()->json(['success' => false, 'message' => 'Jenis izin tidak valid.'], 400);
+            }
+
+            $startDate = Carbon::parse($request->input('tanggal_mulai'));
+            $endDate = Carbon::parse($request->input('tanggal_selesai'));
+
+            $overlappingRecord = CatatanKehadiran::where('user_id', $user->id)
+            ->whereIn('status_izin', ['menunggu', 'disetujui'])
             ->where(function ($query) use ($startDate, $endDate) {
-                // Cek jika tanggal mulai atau selesai izin baru berada di dalam rentang record yang sudah ada
                 $query->where(function ($q) use ($startDate, $endDate) {
-                    $q->where('tanggal_masuk', '<=', $endDate) // Tanggal mulai record lama <= tanggal selesai izin baru
-                      ->whereRaw('COALESCE(tanggal_selesai_izin, tanggal_masuk) >= ?', [$startDate]); // Tanggal selesai record lama >= tanggal mulai izin baru
+                    $q->where('tanggal_masuk', '<=', $endDate)
+                        ->whereRaw('COALESCE(tanggal_selesai_izin, tanggal_masuk) >= ?', [$startDate]);
                 });
             })
-            ->exists();
+                ->exists();
 
-        if ($overlappingRecord) {
-            return response()->json(['success' => false, 'message' => 'Anda sudah memiliki catatan kehadiran/izin pada rentang tanggal tersebut.'], 400);
+            // if ($overlappingRecord) {
+            //     return response()->json(['success' => false, 'message' => 'Anda sudah memiliki catatan kehadiran/izin pada rentang tanggal tersebut.'], 400);
+            // }
+
+            $filePath = null;
+            if ($request->hasFile('surat')) {
+                $filePath = $request->file('surat')->store('public/surat_izin'); // Simpan ke storage/app/public/surat_izin
+            }
+
+            CatatanKehadiran::create([
+                'user_id' => $user->id,
+                'jenis_kehadiran_id' => $jenisKehadiran->id,
+                'tanggal_masuk' => $startDate, // Tanggal mulai izin
+                'jam_masuk' => null, // Untuk izin, jam masuk bisa null
+                'ip_address_masuk' => $clientIp,
+                'tanggal_selesai_izin' => $endDate,
+                'keterangan_izin' => $request->input('keterangan'),
+                'file_pendukung_izin' => $filePath,
+            ]);
+            
+            // Update session jika izin mencakup hari ini
+            if ($now->betweenIncluded($startDate, $endDate->endOfDay())) {
+                session(['has_attended_today' => true]);
+                session()->forget('has_clocked_out_today');
+            }
+
+            return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
         }
-
-        $filePath = null;
-        if ($request->hasFile('surat')) {
-            $filePath = $request->file('surat')->store('public/surat_izin'); // Simpan ke storage/app/public/surat_izin
-        }
-
-        CatatanKehadiran::create([
-            'user_id' => $user->id,
-            'jenis_kehadiran_id' => $jenisKehadiran->id,
-            'tanggal_masuk' => $startDate, // Tanggal mulai izin
-            'jam_masuk' => null, // Untuk izin, jam masuk bisa null
-            'ip_address_masuk' => $clientIp,
-            'tanggal_selesai_izin' => $endDate,
-            'keterangan_izin' => $request->input('keterangan'),
-            'file_pendukung_izin' => $filePath,
-        ]);
-        
-        // Update session jika izin mencakup hari ini
-        if ($now->betweenIncluded($startDate, $endDate->endOfDay())) {
-            session(['has_attended_today' => true]);
-            session()->forget('has_clocked_out_today');
-        }
-
-        return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
-    }
 
     
 }

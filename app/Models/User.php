@@ -50,7 +50,7 @@ class User extends Authenticatable
     }
 
     public function catatanKehadiran() {
-        return $this->hasMany(CatatanKehadiran::class, 'users_id');
+        return $this->hasMany(CatatanKehadiran::class);
     }
 
     public function permintaanCuti() {

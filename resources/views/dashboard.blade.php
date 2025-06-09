@@ -124,7 +124,7 @@
                         Informasi Pegawai
                     </h3>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-8">
+                    <div class="grid grid-cols-4 md:grid-cols-2 gap-4 sm:gap-8">
                         <!-- Basic Information -->
                         <div class="space-y-4 sm:space-y-6">
                             <div
