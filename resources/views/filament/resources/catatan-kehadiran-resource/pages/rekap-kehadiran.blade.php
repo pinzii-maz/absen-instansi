@@ -46,38 +46,34 @@
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Divisi</th>
                     <th
-                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                        Jabatan (Role)</th>
+                        class="px-6 py-3 text-center text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                        Total Hadir</th>
                     <th
                         class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                         Rekap DL/TL</th>
                 </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                {{-- Loop sekarang menggunakan $daftarPegawai --}}
                 @forelse ($daftarPegawai as $pegawai)
                     <tr>
                         <td class="px-6 py-4 whitespace-nowrap">
                             <div class="text-sm font-medium text-gray-900 dark:text-white">{{ $pegawai->name }}</div>
-                            {{-- Tampilkan NIP jika ada --}}
                             @if ($pegawai->nip)
                                 <div class="text-xs text-gray-500">{{ $pegawai->nip }}</div>
                             @endif
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                            {{-- Tampilkan status PNS/Non-PNS berdasarkan NIP --}}
                             {{ $pegawai->nip ? 'PNS' : 'Non-PNS' }}
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                            {{-- Tampilkan nama divisi, beri tanda '-' jika kosong --}}
                             {{ $pegawai->divisi->name ?? '-' }}
                         </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                            {{-- Ubah format role agar lebih mudah dibaca --}}
-                            {{ Str::of($pegawai->role)->replace('_', ' ')->title() }}
+                        {{-- ✅ TAMBAHKAN KOLOM BARU INI --}}
+                        <td
+                            class="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900 dark:text-white">
+                            {{ $pegawai->hadir_penuh_count }} Hari
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-white">
-                            {{-- Tampilkan rekap DL dan TL dengan warna --}}
                             <div class="flex items-center gap-2">
                                 @if ($pegawai->dinas_luar_count > 0)
                                     <span

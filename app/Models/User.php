@@ -50,6 +50,7 @@ class User extends Authenticatable
     }
 
     public function catatanKehadiran() {
+        // return $this->hasMany(CatatanKehadiran::class);
         return $this->hasMany(CatatanKehadiran::class);
     }
 

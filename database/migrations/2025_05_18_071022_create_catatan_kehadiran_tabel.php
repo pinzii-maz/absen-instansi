@@ -26,7 +26,7 @@ return new class extends Migration
             
             $table->unsignedTinyInteger('jenis_kehadiran_id_pulang')->nullable(); 
             $table->foreign('jenis_kehadiran_id_pulang')->references('id')->on('jenis_kehadiran');
-            $table->time('jam_pulang')->nullable();         
+            $table->time('jam_pulang')->nullable();             
             $table->string('ip_address_pulang')->nullable();
             
             // Untuk Izin
