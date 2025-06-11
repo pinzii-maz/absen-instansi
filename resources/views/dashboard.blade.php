@@ -91,18 +91,21 @@
                                 </div>
 
                                 <div id="wifiStatus"
-                                    class="mt-3 sm:mt-4 bg-white rounded-lg p-3 sm:p-4 shadow-md border border-gray-200">
+                                    class="mt-3 sm:mt-4 bg-gray-50 rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 transition-all duration-300">
                                     <div class="flex items-center">
-                                        <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-blue-500 animate-spin"
-                                            fill="none" viewBox="0 0 24 24">
-                                            <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                stroke="currentColor" stroke-width="4"></circle>
-                                            <path class="opacity-75" fill="currentColor"
-                                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                            </path>
-                                        </svg>
-                                        <span class="text-sm sm:text-base text-gray-700">Memeriksa koneksi
-                                            WiFi...</span>
+                                        {{-- Kita beri ID agar ikonnya bisa diganti --}}
+                                        <div id="wifiIcon" class="w-5 h-5 mr-2">
+                                            <svg class="animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10"
+                                                    stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor"
+                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                                                </path>
+                                            </svg>
+                                        </div>
+                                        {{-- Kita beri ID agar teksnya bisa diganti --}}
+                                        <span id="wifiText" class="text-sm sm:text-base text-gray-700">Memeriksa
+                                            koneksi...</span>
                                     </div>
                                 </div>
                             </div>
@@ -112,11 +115,12 @@
             </div>
 
             <!-- Employee Information Section -->
+            {{-- Ganti blok "Informasi Pegawai" Anda dengan ini --}}
             <div
-                class="bg-white rounded-xl shadow-xl transform transition-all duration-300 hover:shadow-2xl mb-6 sm:mb-8">
-                <div class="p-4 sm:p-8">
+                class="bg-white rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-2xl mb-6 sm:mb-8">
+                <div class="p-6 sm:p-8">
                     <h3 class="text-xl sm:text-2xl font-bold text-gray-800 mb-6 sm:mb-8 flex items-center">
-                        <svg class="w-5 h-5 sm:w-6 sm:h-6 mr-2 text-gray-800" fill="none" stroke="currentColor"
+                        <svg class="w-6 h-6 mr-3 text-gray-700" fill="none" stroke="currentColor"
                             viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
@@ -124,55 +128,24 @@
                         Informasi Pegawai
                     </h3>
 
-                    <div class="grid grid-cols-4 md:grid-cols-2 gap-4 sm:gap-8">
-                        <!-- Basic Information -->
-                        <div class="space-y-4 sm:space-y-6">
-                            <div
-                                class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Nama Lengkap</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->name }}
-                                </p>
-                            </div>
-                            <div
-                                class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Email</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->email }}
-                                </p>
-                            </div>
-                            <div
-                                class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">NIP</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">{{ auth()->user()->nip }}
-                                </p>
-                            </div>
-                        </div>
+                    {{-- PERBAIKAN RESPONSIVE & DINAMIS DIMULAI DI SINI --}}
+                    {{-- 1 kolom di layar kecil, 2 kolom di layar medium ke atas --}}
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
 
-                        <!-- Position Information -->
-                        <div class="space-y-4 sm:space-y-6">
+                        {{-- Loop melalui semua data yang disiapkan di controller --}}
+                        @foreach ($pegawaiInfo as $info)
                             <div
-                                class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Jabatan</h4>
-                                <p class="text-base sm:text-lg font-semibold text-gray-800">
-                                    {{ ucwords(str_replace('_', ' ', auth()->user()->role)) }}</p>
+                                class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-sm transition-shadow duration-300">
+                                <h4 class="text-sm font-medium text-gray-500 mb-1">{{ $info['label'] }}</h4>
+                                {{-- Tampilkan 'Tidak ada data' jika nilainya kosong --}}
+                                <p class="text-base font-semibold text-gray-900 break-words">
+                                    {{ $info['value'] ?? '-' }}
+                                </p>
                             </div>
+                        @endforeach
 
-                            @if (auth()->user()->role === 'pelaksana')
-                                <div
-                                    class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                    <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Unit Kerja</h4>
-                                    <p class="text-base sm:text-lg font-semibold text-gray-800">
-                                        {{ auth()->user()->unit_kerja }}</p>
-                                </div>
-                                <div
-                                    class="bg-gray-50 rounded-lg p-4 sm:p-6 border border-gray-200 hover:shadow-md transition-all duration-300">
-                                    <h4 class="text-xs sm:text-sm font-medium text-gray-500 mb-1">Jabatan Fungsional
-                                    </h4>
-                                    <p class="text-base sm:text-lg font-semibold text-gray-800">
-                                        {{ auth()->user()->jabatan_fungsional }}</p>
-                                </div>
-                            @endif
-                        </div>
                     </div>
+                    {{-- PERBAIKAN SELESAI --}}
                 </div>
             </div>
 
@@ -620,6 +593,58 @@
                 const fileDropText = fileUploadInput.closest('.flex.text-sm.text-gray-600').querySelector('p.pl-1');
                 if (fileDropText) fileDropText.textContent = fileName;
             }
+
+            document.addEventListener('DOMContentLoaded', function() {
+
+                // Definisikan elemen-elemen yang akan diubah
+                const statusContainer = document.getElementById('wifiStatus');
+                const statusIcon = document.getElementById('wifiIcon');
+                const statusText = document.getElementById('wifiText');
+
+                // Definisikan ikon centang dan silang (SVG)
+                const iconCentang = `
+            <svg class="text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+            </svg>`;
+
+                const iconSilang = `
+            <svg class="text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
+            </svg>`;
+
+                // Fungsi untuk memanggil API backend
+                async function periksaStatusJaringan() {
+                    try {
+                        const response = await fetch('{{ route('kehadiran.cek-jaringan') }}');
+                        const data = await response.json();
+
+                        // Hapus class warna default
+                        statusContainer.classList.remove('bg-gray-50', 'border-gray-200');
+
+                        if (data.status === 'allowed') {
+                            // Jika diizinkan
+                            statusIcon.innerHTML = iconCentang;
+                            statusText.textContent = 'Terhubung ke jaringan kantor.';
+                            statusContainer.classList.add('bg-green-50', 'border-green-300');
+                        } else {
+                            // Jika ditolak
+                            statusIcon.innerHTML = iconSilang;
+                            statusText.textContent = 'Tidak terhubung ke jaringan kantor.';
+                            statusContainer.classList.add('bg-red-50', 'border-red-300');
+                        }
+
+                    } catch (error) {
+                        // Jika terjadi error saat fetch
+                        console.error('Gagal memeriksa status jaringan:', error);
+                        statusIcon.innerHTML = iconSilang;
+                        statusText.textContent = 'Gagal memeriksa status jaringan.';
+                        statusContainer.classList.add('bg-red-50', 'border-red-300');
+                    }
+                }
+
+                // Panggil fungsi tersebut
+                periksaStatusJaringan();
+            });
         }
     </script>
 </x-app-layout>

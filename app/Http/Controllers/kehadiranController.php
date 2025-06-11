@@ -45,6 +45,7 @@ class kehadiranController extends Controller
             ->whereHas('jenisKehadiran', function($q) {
                 $q->where('code', 'H'); // Hanya hitung yang 'Hadir (Masuk)'
             })
+            ->whereNotNull('jam_pulang')
             ->count();
 
         $jamMasukKantor = '08:00:00';
@@ -56,6 +57,7 @@ class kehadiranController extends Controller
                 $q->where('code', 'H');
             })
             ->whereTime('jam_masuk', '<=', $jamMasukKantor)
+            ->whereNotNull('jam_pulang')
             ->count();
         
         $onTimePercentage = ($totalMasukBulanIni > 0) ? round(($totalTepatWaktu / $totalMasukBulanIni) * 100) : 0;
@@ -72,11 +74,26 @@ class kehadiranController extends Controller
         ->take(5) 
         ->get();
 
+        $pegawaiInfo = [
+        ['label' => 'Nama Lengkap', 'value' => $user->name],
+        ['label' => 'Email', 'value' => $user->email],
+        ['label' => 'NIP', 'value' => $user->nip],
+        ['label' => 'Jabatan', 'value' => ucwords(str_replace('_', ' ', $user->role))],
+    ];
+
+    // Tambahkan data tambahan HANYA jika rolenya 'pelaksana'
+    // if ($user->role === 'pelaksana') {
+    //     $pegawaiInfo[] = ['label' => 'Unit Kerja', 'value' => $user->unit_kerja];
+    //     // Jika ada jabatan fungsional, tambahkan juga di sini
+    //     // $pegawaiInfo[] = ['label' => 'Jabatan Fungsional', 'value' => $user->jabatan_fungsional];
+    // }
+
         return view('dashboard', compact(
         'totalAttendance', 
         'onTimePercentage', 
         'jenisKehadiran',
-        'leaveRequests'
+        'leaveRequests',
+        'pegawaiInfo'
     ));
     }
 
@@ -297,5 +314,18 @@ class kehadiranController extends Controller
             return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
         }
 
+         public function cekJaringan(Request $request)
+    {
+        $clientIp = IpHelper::getClientIp($request);
+        $officeNetworks = JaringanKantor::pluck('ip_cidr')->all();
+
+        if (IpHelper::isIpInOfficeNetwork($clientIp, $officeNetworks)) {
+            // Jika IP valid, kirim status 'allowed'
+            return response()->json(['status' => 'allowed', 'ip' => $clientIp]);
+        } else {
+            // Jika IP tidak valid, kirim status 'denied'
+            return response()->json(['status' => 'denied', 'ip' => $clientIp]);
+        }
+    }
     
 }
