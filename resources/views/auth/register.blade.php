@@ -299,10 +299,12 @@
                             <option value="kepala_bagian_materi_dan_komunikasi_pimpinan">Kepala Bagian Materi dan
                                 Komunikasi Pimpinan</option>
                             <option value="kepala_sub_bagian_tata_usaha">Kepala Sub Bagian Tata Usaha</option>
-                            <option value="analisi_kebijakan_ahli_muda">Analisi Kebijakan Ahli Muda</option>
+                            {{-- <option value="analisi_kebijakan_ahli_muda">Analisi Kebijakan Ahli Muda</option>
                             <option value="pranata_hubungan_masyarakat_ahli_muda">Pranata Hubungan Masyarakat Ahli Muda
-                            </option>
-                            <option value="pelaksana">Pelaksana</option>
+                            </option> --}}
+                            <option value="pelaksana">jabatan Pelaksana</option>
+                            <option value="jabatan fungsional">jabatan fungsional</option>
+                        </option>
                         </select>
                         <x-input-error :messages="$errors->get('role')" class="mt-2" />
                     </div>

@@ -14,9 +14,9 @@ class JaringanKantorSeeder extends Seeder
         public function run(): void
         {
             JaringanKantor::updateOrCreate(
-                ['name' => 'Semanggi Putra 2'],
+                ['name' => 'Semanggi Putra 2'], 
         [ // Hanya satu array untuk data
-            'ssid' => 'semanggi putra 2',
+            'ssid' => 'Semanggi Putra 2',
             'ip_cidr' => '192.168.1.0/24'
         ]
             );

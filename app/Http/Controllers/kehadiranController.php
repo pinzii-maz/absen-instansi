@@ -81,13 +81,6 @@ class kehadiranController extends Controller
         ['label' => 'Jabatan', 'value' => ucwords(str_replace('_', ' ', $user->role))],
     ];
 
-    // Tambahkan data tambahan HANYA jika rolenya 'pelaksana'
-    // if ($user->role === 'pelaksana') {
-    //     $pegawaiInfo[] = ['label' => 'Unit Kerja', 'value' => $user->unit_kerja];
-    //     // Jika ada jabatan fungsional, tambahkan juga di sini
-    //     // $pegawaiInfo[] = ['label' => 'Jabatan Fungsional', 'value' => $user->jabatan_fungsional];
-    // }
-
         return view('dashboard', compact(
         'totalAttendance', 
         'onTimePercentage', 
@@ -284,10 +277,6 @@ class kehadiranController extends Controller
                 });
             })
                 ->exists();
-
-            // if ($overlappingRecord) {
-            //     return response()->json(['success' => false, 'message' => 'Anda sudah memiliki catatan kehadiran/izin pada rentang tanggal tersebut.'], 400);
-            // }
 
             $filePath = null;
             if ($request->hasFile('surat')) {

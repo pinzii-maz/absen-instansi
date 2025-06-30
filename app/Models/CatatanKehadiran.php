@@ -26,13 +26,12 @@ class CatatanKehadiran extends Model
         'catatan_tambahan',
         'status_izin',  
         'approved_by',
+        'alasan_penolakan',
     ];
 
     protected $casts = [
         'tanggal_masuk' => 'date',
         'tanggal_selesai_izin' => 'date',
-        // 'jam_masuk' => 'date',
-        // 'jam_pulang' => 'date',
     ];
 
     public function user()
