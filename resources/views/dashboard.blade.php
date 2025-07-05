@@ -53,6 +53,16 @@
                                 </div>
                             </div>
 
+                            <!-- Real-Time Clock and Notification Area -->
+                            <div class="flex flex-col items-center mb-2">
+                                <div id="realtimeClock"
+                                    style="color:#1e40af;font-size:2.25rem;font-family:monospace;font-weight:bold;letter-spacing:0.1em;opacity:1;text-shadow:0 2px 8px #e0e7ef;">
+                                </div>
+                                <div id="absenNotification"
+                                    style="font-size:1.1rem;font-weight:600;min-height:40px;padding:0.75rem 1.25rem;margin-top:0.25rem;margin-bottom:0.5rem;border-radius:0.75rem;display:flex;align-items:center;opacity:1;background:#f8fafc;color:#1e293b;border:1.5px solid #e5e7eb;transition:all .3s;">
+                                </div>
+                            </div>
+
                             <!-- Attendance Actions -->
                             <div class="space-y-3 sm:space-y-4" data-aos="fade-up" data-aos-delay="100">
                                 <div class="flex flex-wrap gap-2 sm:gap-4">
@@ -362,9 +372,186 @@
             }
         });
 
+        // --- Real-Time Clock & Attendance Notification Logic ---
+        const realtimeClock = document.getElementById('realtimeClock');
+        const absenNotification = document.getElementById('absenNotification');
+
+        function pad(num) {
+            return num.toString().padStart(2, '0');
+        }
+
+        function getTimeStatus(now) {
+            // Returns {status, message, type} for absen masuk/pulang
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            const timeStr = pad(hour) + ':' + pad(minute);
+            // Masuk: 08:00 - 10:00
+            // Pulang: 16:00 - 16:30
+            if (hour < 8) {
+                return {
+                    status: 'belum_buka',
+                    message: 'Absen Masuk dibuka pukul 08:00',
+                    type: 'info'
+                };
+            } else if (hour === 8 || (hour === 9) || (hour === 10 && minute === 0)) {
+                if (hour === 10 && minute > 0) {
+                    return {
+                        status: 'terlambat',
+                        message: 'Absen Masuk sudah ditutup. Silakan hubungi admin.',
+                        type: 'error'
+                    };
+                }
+                if (hour === 10 && minute === 0) {
+                    return {
+                        status: 'terlambat',
+                        message: 'Absen Masuk Terlambat! (10:00)',
+                        type: 'warning'
+                    };
+                }
+                if (hour === 8 && minute === 0) {
+                    return {
+                        status: 'buka',
+                        message: 'Absen Masuk dibuka! Silakan absen.',
+                        type: 'success'
+                    };
+                }
+                if (hour === 9 || (hour === 8 && minute > 0)) {
+                    return {
+                        status: 'buka',
+                        message: 'Absen Masuk dibuka! Silakan absen.',
+                        type: 'success'
+                    };
+                }
+                return {
+                    status: 'buka',
+                    message: 'Absen Masuk dibuka! Silakan absen.',
+                    type: 'success'
+                };
+            } else if (hour === 10 && minute > 0 || hour > 10) {
+                return {
+                    status: 'terlambat',
+                    message: 'Absen Masuk sudah ditutup.',
+                    type: 'error'
+                };
+            }
+            // Default
+            return {
+                status: 'unknown',
+                message: '',
+                type: 'info'
+            };
+        }
+
+        function getPulangStatus(now) {
+            const hour = now.getHours();
+            const minute = now.getMinutes();
+            if (hour < 16 || (hour === 16 && minute < 0)) {
+                return {
+                    status: 'belum_buka',
+                    message: 'Absen Pulang dibuka pukul 16:00',
+                    type: 'info'
+                };
+            } else if (hour === 16 && minute >= 0 && minute <= 30) {
+                return {
+                    status: 'buka',
+                    message: 'Absen Pulang dibuka! Silakan absen.',
+                    type: 'success'
+                };
+            } else if ((hour === 16 && minute > 30) || hour > 16) {
+                return {
+                    status: 'tutup',
+                    message: 'Absen Pulang sudah ditutup.',
+                    type: 'error'
+                };
+            }
+            return {
+                status: 'unknown',
+                message: '',
+                type: 'info'
+            };
+        }
+
+        function updateClockAndNotification() {
+            const now = new Date();
+            // Clock
+            const jam = pad(now.getHours());
+            const menit = pad(now.getMinutes());
+            const detik = pad(now.getSeconds());
+            realtimeClock.textContent = `${jam}:${menit}:${detik}`;
+            realtimeClock.style.color = '#1e40af'; // blue-800
+            realtimeClock.style.opacity = '1';
+            // Notification logic
+            let notif = '';
+            let notifType = '';
+            let icon = '';
+            let showFor = '';
+            if (!hasAttendedToday) {
+                const masukStatus = getTimeStatus(now);
+                notif = masukStatus.message;
+                notifType = masukStatus.type;
+                showFor = 'masuk';
+            } else if (!hasClockedOutToday) {
+                const pulangStatus = getPulangStatus(now);
+                notif = pulangStatus.message;
+                notifType = pulangStatus.type;
+                showFor = 'pulang';
+            } else {
+                notif = 'Terima kasih, absensi hari ini sudah lengkap!';
+                notifType = 'success';
+            }
+            // Icon
+            if (notifType === 'success') icon =
+                '<svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>';
+            else if (notifType === 'warning') icon =
+                '<svg class="w-5 h-5 text-yellow-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01" /></svg>';
+            else if (notifType === 'error') icon =
+                '<svg class="w-5 h-5 text-red-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>';
+            else icon =
+                '<svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2" fill="none" /></svg>';
+            absenNotification.innerHTML = icon + '<span>' + notif + '</span>';
+            absenNotification.style.background = notifType === 'success' ? '#dcfce7' : notifType === 'warning' ? '#fef9c3' :
+                notifType === 'error' ? '#fee2e2' : '#f8fafc';
+            absenNotification.style.color = notifType === 'success' ? '#166534' : notifType === 'warning' ? '#92400e' :
+                notifType === 'error' ? '#991b1b' : '#1e293b';
+            absenNotification.style.borderColor = notifType === 'success' ? '#bbf7d0' : notifType === 'warning' ?
+                '#fde68a' : notifType === 'error' ? '#fecaca' : '#e5e7eb';
+            absenNotification.style.opacity = '1';
+            // Button state logic
+            if (!hasAttendedToday) {
+                const masukStatus = getTimeStatus(now);
+                if (masukStatus.status === 'buka') {
+                    btnAbsenMasuk.disabled = false;
+                    btnAbsenMasuk.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btnAbsenMasuk.disabled = true;
+                    btnAbsenMasuk.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                btnAbsenPulang.disabled = true;
+                btnAbsenPulang.classList.add('opacity-50', 'cursor-not-allowed');
+            } else if (!hasClockedOutToday) {
+                const pulangStatus = getPulangStatus(now);
+                if (pulangStatus.status === 'buka') {
+                    btnAbsenPulang.disabled = false;
+                    btnAbsenPulang.classList.remove('opacity-50', 'cursor-not-allowed');
+                } else {
+                    btnAbsenPulang.disabled = true;
+                    btnAbsenPulang.classList.add('opacity-50', 'cursor-not-allowed');
+                }
+                btnAbsenMasuk.disabled = true;
+                btnAbsenMasuk.classList.add('opacity-50', 'cursor-not-allowed');
+            } else {
+                btnAbsenMasuk.disabled = true;
+                btnAbsenMasuk.classList.add('opacity-50', 'cursor-not-allowed');
+                btnAbsenPulang.disabled = true;
+                btnAbsenPulang.classList.add('opacity-50', 'cursor-not-allowed');
+            }
+        }
+        setInterval(updateClockAndNotification, 1000);
+        document.addEventListener('DOMContentLoaded', updateClockAndNotification);
+
+        // --- Enhance checkWifiAndRecord to show friendly time-based messages ---
         async function checkWifiAndRecord(type) {
             const button = (type === 'masuk') ? btnAbsenMasuk : btnAbsenPulang;
-            // Pastikan btnAbsenMasuk dan btnAbsenPulang sudah didefinisikan dan ditemukan
             if (!button) {
                 console.error('Tombol absen tidak ditemukan untuk tipe:', type);
                 return;
@@ -418,16 +605,10 @@
 
                     if (type === 'masuk') {
                         hasAttendedToday = true;
-                        // Jika ada perubahan UI lain setelah absen masuk (misal pesan selamat datang)
-                        // document.querySelector('.welcome-message h1').textContent = "Selamat Bertugas, {{ auth()->user()->name }}!";
-                        // document.querySelector('.welcome-message p').textContent = "Semoga Harimu Menyenangkan";
-
                     } else if (type === 'pulang') {
                         hasClockedOutToday = true;
                     }
-                    updateButtonStates(); // Pastikan fungsi ini ada dan dipanggil
-                    // Pertimbangkan apakah perlu reload halaman atau cukup update UI
-                    // location.reload(); 
+                    updateButtonStates();
                 } else {
                     showNotification(data.message || 'Gagal melakukan absensi.', 'error');
                     if (statusMessageContainer && statusMessageContainer.querySelector('span')) {
@@ -442,13 +623,7 @@
                 }
             } finally {
                 button.innerHTML = originalButtonText;
-                // Panggil updateButtonStates lagi untuk memastikan status tombol benar setelah proses
-                // karena mungkin button.disabled di-set false lagi oleh updateButtonStates() jika kondisi terpenuhi
                 updateButtonStates();
-                // Jika updateButtonStates() tidak meng-cover semua kondisi, Anda mungkin perlu set button.disabled lagi di sini
-                // if(! ( (type === 'masuk' && hasAttendedToday) || (type === 'pulang' && hasClockedOutToday) ) ){
-                //    button.disabled = false; // Hanya aktifkan jika belum berhasil absen
-                // }
             }
         }
 
@@ -462,17 +637,12 @@
                 `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" ...></svg> Mengirim...`;
 
             const formData = new FormData(this);
-            // Tambahkan kode jenis izin dari select ke FormData jika nama field di backend berbeda
-            // Misalnya jika select name="jenis_izin" di HTML, tapi backend expect "kode_izin"
-            // formData.append('kode_izin', this.querySelector('select[name="jenis_izin"]').value);
-
             try {
                 const response = await fetch("{{ route('kehadiran.izin') }}", {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json',
-                        // Content-Type akan diatur otomatis oleh FormData jika ada file
                     },
                     body: formData
                 });
@@ -506,20 +676,13 @@
             }
         });
 
-        // Fungsi showIzinModal, closeIzinModal, showNotification (dari kode Anda)
-        // ... (letakkan di sini) ...
         function showIzinModal() {
             const modal = document.getElementById('izinModal');
             modal.classList.remove('hidden');
-            // Jika menggunakan class untuk transisi:
-            // setTimeout(() => modal.querySelector('.relative').classList.add('transform', 'translate-y-0', 'opacity-100'), 10);
         }
 
         function closeIzinModal() {
             const modal = document.getElementById('izinModal');
-            // Jika menggunakan class untuk transisi:
-            // modal.querySelector('.relative').classList.remove('transform', 'translate-y-0', 'opacity-100');
-            // setTimeout(() => modal.classList.add('hidden'), 300);
             modal.classList.add('hidden');
         }
 

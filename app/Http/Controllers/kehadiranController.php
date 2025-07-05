@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\IpHelper; // ✅ Perbaikan import
+use App\Helpers\IpHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\JaringanKantor;
@@ -19,6 +19,7 @@ class kehadiranController extends Controller
     public function dashboard() {
         $user = Auth::user();
         $today = Carbon::now();
+        $now = Carbon::now();
         $currentMonthStart = Carbon::now()->startOfMonth();
         $currentMonthEnd = Carbon::now()->endOf('month');
 
@@ -97,7 +98,8 @@ class kehadiranController extends Controller
             $user = Auth::user();
             $clientIp = IpHelper::getClientIp($request);
             $today = Carbon::today();
-
+            $now = Carbon::now();
+            $today = $now->today();
             // Cek apakah IP client berada dalam jaringan kantor 
             $jaringanKantor = JaringanKantor::all();
             $allowedCidrs = $jaringanKantor->pluck('ip_cidr')->toArray();
@@ -119,6 +121,26 @@ class kehadiranController extends Controller
                     'success' => false,
                     'message' => 'Anda sudah melakukan absen masuk hari ini'
                 ], 400);
+            }
+
+            $startTime = Carbon::createFromTimeString('08:00:00');
+            $lateTime = Carbon::createFromTimeString('10:00:00');
+
+            
+            $jenisKehadiranCode = '';
+            if ($now->between($startTime, $lateTime)) {
+                $jenisKehadiranCode = 'H'; // Hadir Tepat Waktu
+            } else if ($now->isAfter($lateTime)) {
+                $jenisKehadiranCode = 'T'; // Hadir Terlambat
+            } else {
+                return response()->json(['success' => false, 'message' => 'Waktu untuk absen masuk adalah mulai pukul 08:00.'], 400);
+            }
+            // --- LOGIKA ATURAN JAM SELESAI ---
+
+            // Ambil ID jenis kehadiran berdasarkan kode
+            $jenisKehadiran = JenisKehadiran::where('code', $jenisKehadiranCode)->first();
+            if (!$jenisKehadiran) {
+                return response()->json(['success' => false, 'message' => 'Jenis kehadiran ('.$jenisKehadiranCode.') tidak ditemukan.'], 404);
             }
 
             // Ambil jenis kehadiran 'Hadir'
@@ -171,6 +193,7 @@ class kehadiranController extends Controller
         try {
             $user = Auth::user();
             $clientIp = IpHelper::getClientIp($request);
+            $now = Carbon::now();
             $today = Carbon::today();
 
             // Cek apakah IP client berada dalam jaringan kantor
@@ -203,9 +226,21 @@ class kehadiranController extends Controller
                 ], 400);
             }
 
+            $startClockOut = $today->copy()->setTime(16, 0, 0);
+            $endClockOut = $today->copy()->setTime(16, 30, 0);   
+            if (!$now->between($startClockOut, $endClockOut)) {
+                return response()->json(['success' => false, 'message' => 'Waktu untuk absen pulang adalah antara pukul 16:00 hingga 16:30.'], 400);
+            }
+
+            $jenisKehadiranPulang = JenisKehadiran::where('code', 'P')->first();
+            if (!$jenisKehadiranPulang) {
+                return response()->json(['success' => false, 'message' => 'Jenis kehadiran Pulang (P) tidak ditemukan.'], 404);
+            }
+
             // Update jam pulang
             $kehadiran->update([
-                'jam_pulang' => Carbon::now(),
+                'jenis_kehadiran_id_pulang' => $jenisKehadiranPulang->id,
+                'jam_pulang' => $now,
                 'ip_address_pulang' => $clientIp
             ]);
 
