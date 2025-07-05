@@ -1,6 +1,6 @@
 /* dashboard.css */
 :root {
-    --background-light: #FFF5F6;
+    --background-light: #fff5f6;
     --background-dark: #111827;
     --card-dark: #1f2937;
     --text-light: #1a1a1a;
@@ -17,16 +17,25 @@ body {
 }
 
 body.dark {
-    background: linear-gradient(to bottom right, var(--background-dark), #1a237e);
+    background: linear-gradient(
+        to bottom right,
+        var(--background-dark),
+        #1a237e
+    );
     color: var(--text-dark);
 }
 
 /* Enhanced card styling */
 .bg-white.rounded-lg {
     background: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     transition: all 0.3s ease;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -ms-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
 }
 
 .dark .bg-white.rounded-lg {
@@ -65,6 +74,7 @@ svg {
 /* Additional styles for attendance features */
 .attendance-card {
     background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.2);
     transition: all 0.3s ease;
@@ -134,6 +144,7 @@ svg {
     border-radius: 9999px;
     font-weight: 500;
     background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(8px);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(255, 255, 255, 0.3);
 }
@@ -149,9 +160,15 @@ svg {
 }
 
 @keyframes floating {
-    0% { transform: translate(0, 0px); }
-    50% { transform: translate(0, 15px); }
-    100% { transform: translate(0, 0px); }
+    0% {
+        transform: translate(0, 0px);
+    }
+    50% {
+        transform: translate(0, 15px);
+    }
+    100% {
+        transform: translate(0, 0px);
+    }
 }
 
 /* Responsive design */
@@ -173,6 +190,7 @@ svg {
 /* Modal styling */
 .modal-content {
     background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     border-radius: 1rem;
@@ -187,13 +205,13 @@ svg {
 /* Clock styling */
 .clock-container {
     background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 255, 255, 0.3);
     padding: 0.5rem 1.5rem;
     border-radius: 9999px;
     margin-bottom: 1rem;
 }
-
 .dark .clock-container {
     background: rgba(31, 41, 55, 0.6);
     border: 1px solid rgba(96, 165, 250, 0.2);
@@ -285,25 +303,53 @@ select::-ms-expand {
     height: 100%;
     top: 0;
     left: 0;
-    background-image:
-        radial-gradient(circle at 15% 50%, rgba(37, 99, 235, 0.1) 0%, transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(29, 78, 216, 0.1) 0%, transparent 25%),
-        radial-gradient(circle at 50% 80%, rgba(30, 64, 175, 0.1) 0%, transparent 25%);
+    background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(37, 99, 235, 0.1) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(29, 78, 216, 0.1) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 50% 80%,
+            rgba(30, 64, 175, 0.1) 0%,
+            transparent 25%
+        );
     animation: patternMove 20s ease-in-out infinite alternate;
     z-index: 0;
 }
 
 .dark .bg-pattern {
-    background-image:
-        radial-gradient(circle at 15% 50%, rgba(96, 165, 250, 0.2) 0%, transparent 25%),
-        radial-gradient(circle at 85% 30%, rgba(96, 165, 250, 0.2) 0%, transparent 25%),
-        radial-gradient(circle at 50% 80%, rgba(96, 165, 250, 0.2) 0%, transparent 25%);
+    background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(96, 165, 250, 0.2) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(96, 165, 250, 0.2) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 50% 80%,
+            rgba(96, 165, 250, 0.2) 0%,
+            transparent 25%
+        );
 }
 
 @keyframes patternMove {
-    0% { transform: scale(1) rotate(0deg); }
-    50% { transform: scale(1.1) rotate(1deg); }
-    100% { transform: scale(1) rotate(0deg); }
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(1deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
 }
 
 /* Logo and Brand Text Styles */

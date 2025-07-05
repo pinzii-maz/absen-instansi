@@ -1,134 +1,152 @@
-            :root {
-                --background-light: #FFF5F6;
-                --background-dark: #111827;
-                --card-dark: #1f2937;
-                --text-light: #1a1a1a;
-                --text-dark: #f3f4f6;
-                --accent-dark: #60a5fa;
-                --gradient-dark-start: #1e40af;
-                --gradient-dark-end: #3b82f6;
-            }
+:root {
+    --background-light: #fff5f6;
+    --background-dark: #111827;
+    --card-dark: #1f2937;
+    --text-light: #1a1a1a;
+    --text-dark: #f3f4f6;
+    --accent-dark: #60a5fa;
+    --gradient-dark-start: #1e40af;
+    --gradient-dark-end: #3b82f6;
+}
 
-            .light {
-                background-color: var(--background-light);
-                color: var(--text-light);
-            }
+.light {
+    background-color: var(--background-light);
+    color: var(--text-light);
+}
 
-            .hero-pattern {
-                background-color: var(--background-light);
-                position: relative;
-                overflow: hidden;
-            }
+.hero-pattern {
+    background-color: var(--background-light);
+    position: relative;
+    overflow: hidden;
+}
 
-            .dark .hero-pattern {
-                background: linear-gradient(to bottom right, var(--background-dark), #1a237e);
-            }
+.dark .hero-pattern {
+    background: linear-gradient(
+        to bottom right,
+        var(--background-dark),
+        #1a237e
+    );
+}
 
-            .decorative-pattern {
-                position: absolute;
-                bottom: 0;
-                left: 0;
-                width: 100%;
-                height: auto;
-                z-index: 0;
-            }
+.decorative-pattern {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    z-index: 0;
+}
 
-            .floating {
-                animation: floating 3s ease-in-out infinite;
-            }
+.floating {
+    animation: floating 3s ease-in-out infinite;
+}
 
-            @keyframes floating {
-                0% { transform: translate(0, 0px); }
-                50% { transform: translate(0, 15px); }
-                100% { transform: translate(0, 0px); }
-            }
+@keyframes floating {
+    0% {
+        transform: translate(0, 0px);
+    }
+    50% {
+        transform: translate(0, 15px);
+    }
+    100% {
+        transform: translate(0, 0px);
+    }
+}
 
-            .gradient-text {
-                background: linear-gradient(45deg, #1a365d, #2563eb);
-                -webkit-background-clip: text;
-                background-clip: text;
-                color: transparent;
-            }
+.gradient-text {
+    background: linear-gradient(45deg, #1a365d, #2563eb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
 
-            .card-hover {
-                transition: all 0.3s ease;
-            }
+.card-hover {
+    transition: all 0.3s ease;
+}
 
-            .card-hover:hover {
-                transform: translateY(-5px);
-                box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            }
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
 
-            .stats-card {
-                backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.8);
-            }
+.stats-card {
+    -webkit-backdrop-filter: blur(10px); /* Tambahkan baris ini */
+    backdrop-filter: blur(10px);
+    background: rgba(255, 255, 255, 0.8);
+}
 
-            .navbar-glass {
-                background-color: rgba(255, 245, 246, 0.85);
-                backdrop-filter: blur(10px);
-                border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-            }
+.navbar-glass {
+    background-color: rgba(255, 245, 246, 0.85);
+    -webkit-backdrop-filter: blur(10px); /* Tambahkan baris ini */
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
 
-            .clock-container {
-                background: rgba(255, 255, 255, 0.2);
-                padding: 0.5rem 1.5rem;
-                border-radius: 9999px;
-                backdrop-filter: blur(5px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
+.clock-container {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    -webkit-backdrop-filter: blur(5px); /* Tambahkan baris ini */
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
-            .clock-text {
-                background: linear-gradient(45deg, #2563eb, #1d4ed8);
-                -webkit-background-clip: text;
-                background-clip: text;
-                color: transparent;
-                font-weight: 600;
-                letter-spacing: 0.05em;
-            }
+.clock-text {
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
 
-            .auth-button {
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(5px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                padding: 0.5rem 1.5rem;
-                font-weight: 500;
-                transition: all 0.3s ease;
-                text-transform: uppercase;
-                letter-spacing: 0.025em;
-                font-size: 0.875rem;
-            }
+.auth-button {
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(5px); /* Tambahkan baris ini */
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1.5rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    font-size: 0.875rem;
+}
 
-            .auth-button:hover {
-                background: rgba(255, 255, 255, 0.3);
-                transform: translateY(-1px);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
+.auth-button:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
-            .auth-button.login {
-                color: #2563eb;
-            }
+.auth-button.login {
+    color: #2563eb;
+}
 
-            .auth-button.register {
-                color: #1e40af;
-            }
+.auth-button.register {
+    color: #1e40af;
+}
 
-            .theme-toggle {
-                position: fixed;
-                bottom: 2rem;
-                right: 2rem;
-                z-index: 50;
-                padding: 0.75rem;
-                border-radius: 50%;
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(8px);
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
+.theme-toggle {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 50;
+    padding: 0.75rem;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(8px); /* Tambahkan baris ini */
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
 
-            .theme-toggle:hover {
-                transform: scale(1.1) rotate(8deg);
-            }
+.theme-toggle:hover {
+    transform: scale(1.1) rotate(8deg);
+}
