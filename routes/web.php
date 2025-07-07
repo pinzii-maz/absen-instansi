@@ -33,9 +33,6 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/kehadiran/izin', [KehadiranController::class, 'submitLeave'])->name('kehadiran.submit-leave');
     Route::get('/kehadiran/cek-jaringan', [KehadiranController::class, 'cekJaringan'])->name('kehadiran.cek-jaringan');
-
-     Route::post('/attendance/clock-in', [kehadiranController::class, 'absenMasuk'])->name('attendance.clockin');
-    Route::post('/attendance/clock-out', [kehadiranController::class, 'absenPulang'])->name('attendance.clockout');
 });
 
 Route::middleware('auth')->group(function () {
