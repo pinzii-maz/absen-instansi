@@ -56,7 +56,7 @@
                             <!-- Attendance Actions -->
                             <div class="space-y-3 sm:space-y-4" data-aos="fade-up" data-aos-delay="100">
                                 <div class="flex flex-wrap gap-2 sm:gap-4">
-                                    <button id="btnAbsenMasuk" onclick="checkWifiAndRecord('masuk')"
+                                    <button id="btnAbsenMasuk"
                                         class="flex-1 sm:flex-none flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-all duration-300 shadow-lg hover:shadow-emerald-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base">
                                         <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -67,7 +67,7 @@
                                         Absen Masuk
                                     </button>
 
-                                    <button id="btnAbsenPulang" onclick="checkWifiAndRecord('pulang')"
+                                    <button id="btnAbsenPulang"
                                         class="flex-1 sm:flex-none flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-300 shadow-lg hover:shadow-blue-500/30 disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base">
                                         <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -78,7 +78,7 @@
                                         Absen Pulang
                                     </button>
 
-                                    <button onclick="showIzinModal()"
+                                    <button id="btnShowIzinModal"
                                         class="flex-1 sm:flex-none flex items-center justify-center px-4 sm:px-6 py-2.5 sm:py-3 bg-gray-800 text-white rounded-lg hover:bg-gray-900 transition-all duration-300 shadow-lg hover:shadow-gray-500/30 text-sm sm:text-base">
                                         <svg class="w-4 h-4 sm:w-5 sm:h-5 mr-2" fill="none" stroke="currentColor"
                                             viewBox="0 0 24 24">
@@ -92,16 +92,12 @@
 
                                 <div id="wifiStatus"
                                     class="mt-3 sm:mt-4 bg-gray-50 rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 transition-all duration-300">
-                                    <div class="flex items-center">
+                                    <div class="flex items-center gap-2">
+                                        <!-- Tambah gap-2 dan pastikan items-center -->
                                         {{-- Kita beri ID agar ikonnya bisa diganti --}}
-                                        <div id="wifiIcon" class="w-5 h-5 mr-2">
-                                            <svg class="animate-spin text-blue-500" fill="none" viewBox="0 0 24 24">
-                                                <circle class="opacity-25" cx="12" cy="12" r="10"
-                                                    stroke="currentColor" stroke-width="4"></circle>
-                                                <path class="opacity-75" fill="currentColor"
-                                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                                                </path>
-                                            </svg>
+                                        <div id="wifiIcon" class="w-6 h-6 mr-0 flex items-center justify-center">
+                                            <!-- w-6 h-6, hilangkan mr-2 -->
+                                            <!-- Icon akan diisi JS -->
                                         </div>
                                         {{-- Kita beri ID agar teksnya bisa diganti --}}
                                         <span id="wifiText" class="text-sm sm:text-base text-gray-700">Memeriksa
@@ -323,328 +319,163 @@
     </div>
 
     <script>
-        // Pastikan elemen-elemen ini ada di HTML Anda
-        const btnAbsenMasuk = document.getElementById('btnAbsenMasuk');
-        const btnAbsenPulang = document.getElementById('btnAbsenPulang');
-        // Ganti 'wifiStatus' jika ID elemen Anda berbeda untuk menampilkan pesan IP/status
-        const statusMessageContainer = document.getElementById('wifiStatus') || document.getElementById('ipStatusMessage');
-        const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-
-        // Ambil status dari session PHP yang di-render ke JavaScript
-        let hasAttendedToday = {{ session('has_attended_today') ? 'true' : 'false' }};
-        let hasClockedOutToday = {{ session('has_clocked_out_today') ? 'true' : 'false' }};
-
-        function updateButtonStates() {
-            if (hasAttendedToday) {
-                btnAbsenMasuk.disabled = true;
-                btnAbsenMasuk.classList.add('opacity-50', 'cursor-not-allowed'); // atau class 'btn-disabled'
-
-                if (hasClockedOutToday) {
-                    btnAbsenPulang.disabled = true;
-                    btnAbsenPulang.classList.add('opacity-50', 'cursor-not-allowed');
-                } else {
-                    btnAbsenPulang.disabled = false;
-                    btnAbsenPulang.classList.remove('opacity-50', 'cursor-not-allowed');
-                }
-            } else {
-                btnAbsenMasuk.disabled = false;
-                btnAbsenMasuk.classList.remove('opacity-50', 'cursor-not-allowed');
-                btnAbsenPulang.disabled = true;
-                btnAbsenPulang.classList.add('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
         document.addEventListener('DOMContentLoaded', function() {
-            updateButtonStates();
-            if (statusMessageContainer) {
-                // Anda bisa menambahkan teks awal jika mau
-                // statusMessageContainer.querySelector('span').textContent = "Siap untuk absen."; 
-            }
-        });
+            // =================================================================
+            // BAGIAN 1: DEFINISI SEMUA ELEMEN DAN VARIABEL
+            // =================================================================
+            const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content');
 
-        async function checkWifiAndRecord(type) {
-            const button = (type === 'masuk') ? btnAbsenMasuk : btnAbsenPulang;
-            // Pastikan btnAbsenMasuk dan btnAbsenPulang sudah didefinisikan dan ditemukan
-            if (!button) {
-                console.error('Tombol absen tidak ditemukan untuk tipe:', type);
-                return;
-            }
-            const originalButtonText = button.innerHTML;
+            // Elemen-elemen Aksi Utama
+            const btnAbsenMasuk = document.getElementById('btnAbsenMasuk');
+            const btnAbsenPulang = document.getElementById('btnAbsenPulang');
+            const btnShowIzinModal = document.getElementById('btnShowIzinModal');
 
-            button.disabled = true;
-            button.innerHTML =
-                `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
+            // Elemen Status Jaringan
+            const statusContainer = document.getElementById('wifiStatus');
+            const statusIcon = document.getElementById('wifiIcon');
+            const statusText = document.getElementById('wifiText');
 
-            if (statusMessageContainer && statusMessageContainer.querySelector('span')) {
-                statusMessageContainer.querySelector('span').textContent = "Memvalidasi jaringan...";
-            }
+            // Elemen Modal Izin
+            const izinModal = document.getElementById('izinModal');
+            const izinForm = document.getElementById('izinForm');
+            const btnCloseModal = izinModal?.querySelector('button[onclick="closeIzinModal()"]'); // Tombol 'X'
+            const btnBatalIzin = izinForm?.querySelector('button[type="button"]'); // Tombol 'Batal'
 
-            let targetRouteName = '';
-            if (type === 'masuk') {
-                targetRouteName = "{{ route('kehadiran.masuk') }}"; // <-- Diubah ke nama route yang benar
-            } else if (type === 'pulang') {
-                targetRouteName = "{{ route('kehadiran.pulang') }}"; // <-- Diubah ke nama route yang benar
-            } else {
-                console.error('Tipe absensi tidak valid:', type);
-                showNotification('Tipe absensi tidak valid.', 'error');
-                button.disabled = false;
-                button.innerHTML = originalButtonText;
-                updateButtonStates(); // Pastikan fungsi ini ada dan dipanggil
-                return;
-            }
+            // Status Kehadiran dari Server (PHP)
+            const hasAttendedToday = {{ session('has_attended_today') ? 'true' : 'false' }};
+            const hasClockedOutToday = {{ session('has_clocked_out_today') ? 'true' : 'false' }};
 
-            try {
-                const response = await fetch(targetRouteName, { // <-- Menggunakan variabel targetRouteName
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': csrfToken, // Pastikan csrfToken sudah didefinisikan
-                        'Accept': 'application/json',
-                    },
-                    // 'type' dalam body mungkin tidak lagi diperlukan karena sudah dibedakan oleh route
-                    // Namun, tidak masalah jika tetap dikirim, controller bisa mengabaikannya.
-                    body: JSON.stringify({
-                        type: type
-                    })
+            // =================================================================
+            // BAGIAN 2: KUMPULAN SEMUA FUNGSI
+            // =================================================================
+
+            // --- Fungsi untuk Absensi dan Status ---
+
+            function updateButtonStates() {
+                if (!btnAbsenMasuk || !btnAbsenPulang) return;
+                const now = new Date();
+                const hours = now.getHours();
+                const canClockIn = hours >= 8;
+                const canClockOut = hours >= 16;
+
+                btnAbsenMasuk.disabled = hasAttendedToday || !canClockIn;
+                btnAbsenPulang.disabled = !hasAttendedToday || hasClockedOutToday || !canClockOut;
+
+                [btnAbsenMasuk, btnAbsenPulang].forEach(button => {
+                    if (button) {
+                        button.classList.toggle('opacity-50', button.disabled);
+                        button.classList.toggle('cursor-not-allowed', button.disabled);
+                    }
                 });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    showNotification(data.message, 'success');
-                    if (statusMessageContainer && statusMessageContainer.querySelector('span')) {
-                        statusMessageContainer.querySelector('span').textContent = data.message;
-                    }
-
-                    if (type === 'masuk') {
-                        hasAttendedToday = true;
-                        // Jika ada perubahan UI lain setelah absen masuk (misal pesan selamat datang)
-                        // document.querySelector('.welcome-message h1').textContent = "Selamat Bertugas, {{ auth()->user()->name }}!";
-                        // document.querySelector('.welcome-message p').textContent = "Semoga Harimu Menyenangkan";
-
-                    } else if (type === 'pulang') {
-                        hasClockedOutToday = true;
-                    }
-                    updateButtonStates(); // Pastikan fungsi ini ada dan dipanggil
-                    // Pertimbangkan apakah perlu reload halaman atau cukup update UI
-                    // location.reload(); 
-                } else {
-                    showNotification(data.message || 'Gagal melakukan absensi.', 'error');
-                    if (statusMessageContainer && statusMessageContainer.querySelector('span')) {
-                        statusMessageContainer.querySelector('span').textContent = data.message || 'Gagal, coba lagi.';
-                    }
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                showNotification('Terjadi kesalahan koneksi.', 'error');
-                if (statusMessageContainer && statusMessageContainer.querySelector('span')) {
-                    statusMessageContainer.querySelector('span').textContent = "Kesalahan koneksi.";
-                }
-            } finally {
-                button.innerHTML = originalButtonText;
-                // Panggil updateButtonStates lagi untuk memastikan status tombol benar setelah proses
-                // karena mungkin button.disabled di-set false lagi oleh updateButtonStates() jika kondisi terpenuhi
-                updateButtonStates();
-                // Jika updateButtonStates() tidak meng-cover semua kondisi, Anda mungkin perlu set button.disabled lagi di sini
-                // if(! ( (type === 'masuk' && hasAttendedToday) || (type === 'pulang' && hasClockedOutToday) ) ){
-                //    button.disabled = false; // Hanya aktifkan jika belum berhasil absen
-                // }
-            }
-        }
-
-        document.getElementById('izinForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            const submitButton = this.querySelector('button[type="submit"]');
-            const originalText = submitButton.innerHTML;
-
-            submitButton.disabled = true;
-            submitButton.innerHTML =
-                `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" ...></svg> Mengirim...`;
-
-            const formData = new FormData(this);
-            // Tambahkan kode jenis izin dari select ke FormData jika nama field di backend berbeda
-            // Misalnya jika select name="jenis_izin" di HTML, tapi backend expect "kode_izin"
-            // formData.append('kode_izin', this.querySelector('select[name="jenis_izin"]').value);
-
-            try {
-                const response = await fetch("{{ route('kehadiran.izin') }}", {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': csrfToken,
-                        'Accept': 'application/json',
-                        // Content-Type akan diatur otomatis oleh FormData jika ada file
-                    },
-                    body: formData
-                });
-
-                const data = await response.json();
-
-                if (response.ok && data.success) {
-                    showNotification(data.message, 'success');
-                    closeIzinModal();
-                    this.reset(); // Reset form
-
-                    // Cek apakah izin mencakup hari ini
-                    const tanggalMulai = new Date(formData.get('tanggal_mulai') + 'T00:00:00');
-                    const tanggalSelesai = new Date(formData.get('tanggal_selesai') + 'T23:59:59');
-                    const today = new Date();
-
-                    if (today >= tanggalMulai && today <= tanggalSelesai) {
-                        hasAttendedToday = true;
-                        updateButtonStates();
-                    }
-                    // location.reload(); // Cara paling mudah, tapi kurang ideal
-                } else {
-                    showNotification(data.message || 'Gagal mengirim pengajuan izin.', 'error');
-                }
-            } catch (error) {
-                console.error('Error submitting leave:', error);
-                showNotification('Terjadi kesalahan koneksi saat mengirim izin.', 'error');
-            } finally {
-                submitButton.disabled = false;
-                submitButton.innerHTML = originalText;
-            }
-        });
-
-        // Fungsi showIzinModal, closeIzinModal, showNotification (dari kode Anda)
-        // ... (letakkan di sini) ...
-        function showIzinModal() {
-            const modal = document.getElementById('izinModal');
-            modal.classList.remove('hidden');
-            // Jika menggunakan class untuk transisi:
-            // setTimeout(() => modal.querySelector('.relative').classList.add('transform', 'translate-y-0', 'opacity-100'), 10);
-        }
-
-        function closeIzinModal() {
-            const modal = document.getElementById('izinModal');
-            // Jika menggunakan class untuk transisi:
-            // modal.querySelector('.relative').classList.remove('transform', 'translate-y-0', 'opacity-100');
-            // setTimeout(() => modal.classList.add('hidden'), 300);
-            modal.classList.add('hidden');
-        }
-
-        window.onclick = function(event) {
-            const modal = document.getElementById('izinModal');
-            if (event.target == modal) {
-                closeIzinModal();
-            }
-        }
-
-        function showNotification(message, type) {
-            const notification = document.createElement('div');
-            notification.className = `fixed top-4 right-4 p-4 rounded-lg shadow-lg transform transition-all duration-300 z-50 ${
-            type === 'success' ? 'bg-green-500' : 'bg-red-500'
-        } text-white`;
-            notification.textContent = message;
-            document.body.appendChild(notification);
-
-            setTimeout(() => {
-                notification.style.opacity = '0'; // Mulai fade out
-                setTimeout(() => notification.remove(), 300); // Hapus setelah transisi
-            }, 3000); // Tampilkan selama 3 detik
-        }
-
-        // Update file upload handling
-        const fileUploadInput = document.getElementById('file-upload');
-        const fileDropZone = fileUploadInput.closest('.border-dashed');
-
-        if (fileUploadInput && fileDropZone) {
-            // Handle file selection
-            fileUploadInput.addEventListener('change', function() {
-                const fileName = this.files[0] ? this.files[0].name : 'atau drag and drop';
-                const fileDropText = this.closest('.flex.text-sm.text-gray-600').querySelector('p.pl-1');
-                if (fileDropText) fileDropText.textContent = fileName;
-            });
-
-            // Handle drag and drop
-            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                fileDropZone.addEventListener(eventName, preventDefaults, false);
-            });
-
-            function preventDefaults(e) {
-                e.preventDefault();
-                e.stopPropagation();
             }
 
-            ['dragenter', 'dragover'].forEach(eventName => {
-                fileDropZone.addEventListener(eventName, highlight, false);
-            });
+            async function periksaStatusJaringan() {
+                if (!statusContainer) return;
+                const iconLoading =
+                `<svg class="animate-spin text-blue-500 w-5 h-5" ...></svg>`; // SVG Asli Anda
+                const iconCentang = `<svg class="text-green-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
+                const iconSilang = `<svg class="text-red-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
 
-            ['dragleave', 'drop'].forEach(eventName => {
-                fileDropZone.addEventListener(eventName, unhighlight, false);
-            });
+                statusIcon.innerHTML = iconLoading;
+                statusText.textContent = "Memeriksa koneksi...";
 
-            function highlight(e) {
-                fileDropZone.classList.add('border-blue-500');
-            }
+                try {
+                    const response = await fetch("{{ route('kehadiran.cek-jaringan') }}");
+                    const data = await response.json();
+                    statusContainer.classList.remove('bg-gray-50', 'border-gray-200');
 
-            function unhighlight(e) {
-                fileDropZone.classList.remove('border-blue-500');
-            }
-
-            fileDropZone.addEventListener('drop', handleDrop, false);
-
-            function handleDrop(e) {
-                const dt = e.dataTransfer;
-                const files = dt.files;
-                fileUploadInput.files = files;
-
-                const fileName = files[0] ? files[0].name : 'atau drag and drop';
-                const fileDropText = fileUploadInput.closest('.flex.text-sm.text-gray-600').querySelector('p.pl-1');
-                if (fileDropText) fileDropText.textContent = fileName;
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-
-                // Definisikan elemen-elemen yang akan diubah
-                const statusContainer = document.getElementById('wifiStatus');
-                const statusIcon = document.getElementById('wifiIcon');
-                const statusText = document.getElementById('wifiText');
-
-                // Definisikan ikon centang dan silang (SVG)
-                const iconCentang = `
-            <svg class="text-green-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>`;
-
-                const iconSilang = `
-            <svg class="text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" />
-            </svg>`;
-
-                // Fungsi untuk memanggil API backend
-                async function periksaStatusJaringan() {
-                    try {
-                        const response = await fetch('{{ route('kehadiran.cek-jaringan') }}');
-                        const data = await response.json();
-
-                        // Hapus class warna default
-                        statusContainer.classList.remove('bg-gray-50', 'border-gray-200');
-
-                        if (data.status === 'allowed') {
-                            // Jika diizinkan
-                            statusIcon.innerHTML = iconCentang;
-                            statusText.textContent = 'Terhubung ke jaringan kantor.';
-                            statusContainer.classList.add('bg-green-50', 'border-green-300');
-                        } else {
-                            // Jika ditolak
-                            statusIcon.innerHTML = iconSilang;
-                            statusText.textContent = 'Tidak terhubung ke jaringan kantor.';
-                            statusContainer.classList.add('bg-red-50', 'border-red-300');
-                        }
-
-                    } catch (error) {
-                        // Jika terjadi error saat fetch
-                        console.error('Gagal memeriksa status jaringan:', error);
+                    if (data.status === 'allowed') {
+                        statusIcon.innerHTML = iconCentang;
+                        statusText.textContent = 'Terhubung ke jaringan kantor.';
+                        statusContainer.classList.add('bg-green-50', 'border-green-300');
+                    } else {
                         statusIcon.innerHTML = iconSilang;
-                        statusText.textContent = 'Gagal memeriksa status jaringan.';
+                        statusText.textContent = 'Tidak terhubung ke jaringan kantor.';
                         statusContainer.classList.add('bg-red-50', 'border-red-300');
                     }
+                } catch (error) {
+                    console.error('Gagal memeriksa status jaringan:', error);
+                    statusIcon.innerHTML = iconSilang;
+                    statusText.textContent = 'Gagal memeriksa status jaringan.';
+                    statusContainer.classList.add('bg-red-50', 'border-red-300');
                 }
+            }
 
-                // Panggil fungsi tersebut
-                periksaStatusJaringan();
-            });
-        }
+            async function handleAttendance(type) {
+                const button = (type === 'masuk') ? btnAbsenMasuk : btnAbsenPulang;
+                const route = (type === 'masuk') ? "{{ route('kehadiran.masuk') }}" :
+                    "{{ route('kehadiran.pulang') }}";
+                const originalButtonText = button.innerHTML;
+
+                button.disabled = true;
+                button.innerHTML =
+                    `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" ...></svg> Memproses...`;
+
+                try {
+                    const response = await fetch(route, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        }
+                    });
+                    const data = await response.json();
+
+                    showNotification(data.message, data.success ? 'success' : 'error');
+
+                    if (data.success) {
+                        setTimeout(() => location.reload(), 1500);
+                    } else {
+                        button.innerHTML = originalButtonText;
+                        updateButtonStates();
+                    }
+                } catch (error) {
+                    showNotification('Terjadi kesalahan koneksi.', 'error');
+                    button.innerHTML = originalButtonText;
+                    updateButtonStates();
+                }
+            }
+
+            // --- Fungsi untuk Modal Izin ---
+            function showIzinModal() {
+                if (izinModal) izinModal.classList.remove('hidden');
+            }
+
+            function closeIzinModal() {
+                if (izinModal) izinModal.classList.add('hidden');
+            }
+
+            async function handleIzinSubmit(event) {
+                // ... (Kode submit izin Anda yang sudah ada)
+            }
+
+            // --- Fungsi Utilitas ---
+            function showNotification(message, type) {
+                // ... (Kode notifikasi Anda yang sudah ada)
+            }
+
+            // =================================================================
+            // BAGIAN 3: MENJALANKAN FUNGSI DAN MEMASANG EVENT LISTENERS
+            // =================================================================
+
+            // Pasang listener untuk tombol-tombol utama
+            if (btnAbsenMasuk) btnAbsenMasuk.addEventListener('click', () => handleAttendance('masuk'));
+            if (btnAbsenPulang) btnAbsenPulang.addEventListener('click', () => handleAttendance('pulang'));
+
+            // Pasang listener untuk Modal Izin
+            if (btnShowIzinModal) btnShowIzinModal.addEventListener('click', showIzinModal);
+            if (izinForm) izinForm.addEventListener('submit', handleIzinSubmit);
+            if (btnCloseModal) btnCloseModal.addEventListener('click', closeIzinModal);
+            if (btnBatalIzin) btnBatalIzin.addEventListener('click', closeIzinModal);
+
+            // Jalankan fungsi inisialisasi saat halaman dimuat
+            periksaStatusJaringan();
+            updateButtonStates();
+
+            // Atur interval untuk auto-update status tombol setiap menit
+            setInterval(updateButtonStates, 60000);
+        });
     </script>
+
 </x-app-layout>

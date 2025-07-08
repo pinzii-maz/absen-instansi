@@ -10,7 +10,13 @@ use Filament\Panel;
 use Filament\Models\Contracts\FilamentUser;
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+
+
+
+
+
+
+class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens, HasFactory, Notifiable;
 
@@ -27,8 +33,8 @@ class User extends Authenticatable
         'role',
         'unit_kerja', 
         'password',
+        'is_admin'
     ];
-
     /**
      * The attributes that should be hidden for serialization.
      *
@@ -46,6 +52,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'email_verified_at' => 'datetime',
+        'is_admin' => 'boolean',
     ];
 
     public function divisi() {
@@ -61,7 +68,10 @@ class User extends Authenticatable
         return $this->hasMany(permintaanCuti::class, 'users_id');
     }
 
-    public function canAccessPanel(Panel $panel):bool {
-        return in_array($this->role, ['admin', 'kepala_biro']);
+     public function canAccessPanel(Panel $panel): bool
+    {
+        // Hanya izinkan jika role adalah 'admin'
+         return $this->is_admin;
     }
+
 }

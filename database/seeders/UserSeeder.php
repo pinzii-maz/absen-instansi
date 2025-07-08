@@ -23,7 +23,7 @@ class UserSeeder extends Seeder
             'nip' => '123456789',
             'divisi_id' => $divisi->id,
             'role' => 'kepala_biro',
-            'password' => Hash::make('password'), // pastikan gunakan Hash!
+            'password' => Hash::make('password'),
         ]);
     }
 }

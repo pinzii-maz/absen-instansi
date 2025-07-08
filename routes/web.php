@@ -33,6 +33,7 @@ Route::middleware('auth')->group(function () {
     
     Route::post('/kehadiran/izin', [KehadiranController::class, 'submitLeave'])->name('kehadiran.submit-leave');
     Route::get('/kehadiran/cek-jaringan', [KehadiranController::class, 'cekJaringan'])->name('kehadiran.cek-jaringan');
+     Route::get('/dashboard', [kehadiranController::class, 'dashboard'])->name('dashboard');
 });
 
 Route::middleware('auth')->group(function () {

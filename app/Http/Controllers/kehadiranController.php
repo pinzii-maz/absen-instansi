@@ -17,91 +17,72 @@ use Illuminate\Support\Facades\Validator;
 class kehadiranController extends Controller
 {
     public function dashboard() {
-        $user = Auth::user();
-        $today = Carbon::now();
-        $currentMonthStart = Carbon::now()->startOfMonth();
-        $currentMonthEnd = Carbon::now()->endOf('month');
+         $user = Auth::user();
+        $today = Carbon::today();
 
-        $hasAttendedToday = CatatanKehadiran::where('user_id', $user->id)
-            ->where(function ($query) use ($today) {
-                $query->whereDate('tanggal_masuk', $today) // Untuk absen harian
-                      ->orWhere(function($q) use ($today) { // Untuk izin multi-hari
-                        $q->whereDate('tanggal_masuk', '<=', $today)
-                            ->whereDate('tanggal_selesai_izin', '>=', $today);
-                    });
-            })
-            ->exists();
-
-            $hasClockedOutToday = CatatanKehadiran::where('user_id', $user->id)
+        // Cek ke database HANYA untuk catatan hari ini yang sudah ada jam masuknya.
+        $absenMasukHariIni = CatatanKehadiran::where('user_id', $user->id)
             ->whereDate('tanggal_masuk', $today)
-            ->whereNotNull('jam_pulang')
-            ->exists();
+            ->whereNotNull('jam_masuk')
+            ->first();
 
-        session(['has_attended_today' => $hasAttendedToday]);
-        session(['has_clocked_out_today' => $hasClockedOutToday]);
+        // Cek apakah sudah absen pulang HANYA JIKA sudah absen masuk hari ini.
+        $absenPulangHariIni = $absenMasukHariIni && $absenMasukHariIni->jam_pulang;
+
+        // Atur session dengan status yang BENAR berdasarkan data hari ini saja.
+        session([
+            'has_attended_today' => (bool)$absenMasukHariIni,
+            'has_clocked_out_today' => (bool)$absenPulangHariIni,
+        ]);
+
+
+        // Sisa kode untuk statistik dan data lainnya (tidak perlu diubah)
+        $currentMonthStart = $today->copy()->startOfMonth();
+        $currentMonthEnd = $today->copy()->endOfMonth();
 
         $totalAttendance = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
-            ->whereHas('jenisKehadiran', function($q) {
-                $q->where('code', 'H'); // Hanya hitung yang 'Hadir (Masuk)'
-            })
-            ->whereNotNull('jam_pulang')
-            ->count();
-
-        $jamMasukKantor = '08:00:00';
-        $totalMasukBulanIni = $totalAttendance;
+            ->whereNotNull('jam_masuk')->count();
 
         $totalTepatWaktu = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
-            ->whereHas('jenisKehadiran', function($q) {
-                $q->where('code', 'H');
-            })
-            ->whereTime('jam_masuk', '<=', $jamMasukKantor)
-            ->whereNotNull('jam_pulang')
-            ->count();
+            ->whereNotNull('jam_masuk')->whereTime('jam_masuk', '<=', '10:00:00')->count();
         
-        $onTimePercentage = ($totalMasukBulanIni > 0) ? round(($totalTepatWaktu / $totalMasukBulanIni) * 100) : 0;
+        $onTimePercentage = ($totalAttendance > 0) ? round(($totalTepatWaktu / $totalAttendance) * 100) : 0;
 
         $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C', 'DL', 'TL'])->get();
 
         $leaveRequests = CatatanKehadiran::where('user_id', $user->id)
-        ->whereHas('jenisKehadiran', function ($query) {
-            
-            $query->whereNotIn('code', ['H', 'P']);
-        })
-        ->with('jenisKehadiran') 
-        ->latest() 
-        ->take(5) 
-        ->get();
+            ->whereHas('jenisKehadiran', fn($q) => $q->whereNotIn('code', ['H', 'P', 'T']))
+            ->with('jenisKehadiran')->latest()->take(5)->get();
 
         $pegawaiInfo = [
-        ['label' => 'Nama Lengkap', 'value' => $user->name],
-        ['label' => 'Email', 'value' => $user->email],
-        ['label' => 'NIP', 'value' => $user->nip],
-        ['label' => 'Jabatan', 'value' => ucwords(str_replace('_', ' ', $user->role))],
-    ];
+            ['label' => 'Nama Lengkap', 'value' => $user->name],
+            ['label' => 'Email', 'value' => $user->email],
+            ['label' => 'NIP', 'value' => $user->nip],
+            ['label' => 'Jabatan', 'value' => ucwords(str_replace('_', ' ', $user->role))],
+        ];
 
-        return view('dashboard', compact(
-        'totalAttendance', 
-        'onTimePercentage', 
-        'jenisKehadiran',
-        'leaveRequests',
-        'pegawaiInfo'
-    ));
+        return view('dashboard', compact('totalAttendance', 'onTimePercentage', 'jenisKehadiran', 'leaveRequests', 'pegawaiInfo'));
     }
 
     // ✅ Method absenMasuk yang hilang
     public function absenMasuk(Request $request)
     {
         try {
-            $user = Auth::user();
+              $user = Auth::user();
             $clientIp = IpHelper::getClientIp($request);
-            $today = Carbon::today();
+            $now = Carbon::now(); // Sekarang akan menggunakan timezone 'Asia/Makassar'
+            $today = $now->today();
 
-            // Cek apakah IP client berada dalam jaringan kantor 
+            // Aturan Waktu
+            if ($now->hour < 8) {
+                return response()->json(['success' => false, 'message' => 'Absen masuk baru dibuka pukul 08:00.'], 400);
+            }
+
+            // Cek jaringan kantor (logika Anda tetap dipertahankan)
             $jaringanKantor = JaringanKantor::all();
             $allowedCidrs = $jaringanKantor->pluck('ip_cidr')->toArray();
-
             if (!IpHelper::isIpInOfficeNetwork($clientIp, $allowedCidrs)) {
                 return response()->json([
                     'success' => false,
@@ -109,42 +90,22 @@ class kehadiranController extends Controller
                 ], 403);
             }
 
-            // Cek apakah user sudah absen masuk hari ini
-            $existingAbsen = CatatanKehadiran::where('user_id', $user->id)
-                ->whereDate('tanggal_masuk', $today)
-                ->first();
+             // Tentukan status Hadir (H) atau Terlambat (T)
+            $jenisKehadiranCode = ($now->hour < 10) ? 'H' : 'T';
+            $jenisKehadiran = JenisKehadiran::where('code', $jenisKehadiranCode)->firstOrFail();
 
-            if ($existingAbsen && $existingAbsen->jam_masuk) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda sudah melakukan absen masuk hari ini'
-                ], 400);
-            }
+            // Simpan data
+            $kehadiran = CatatanKehadiran::create([
+                'user_id' => $user->id,
+                'tanggal_masuk' => $today,
+                'jenis_kehadiran_id' => $jenisKehadiran->id,
+                'jam_masuk' => $now,
+                'ip_address_masuk' => $clientIp,
+                'status_izin' => 'disetujui'
+            ]);
 
-            // Ambil jenis kehadiran 'Hadir'
-            $jenisKehadiran = JenisKehadiran::where('code', 'H')->first();
-            if (!$jenisKehadiran) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Jenis kehadiran tidak ditemukan'
-                ], 400);
-            }
-
-            // Simpan data absen masuk
-            $kehadiran = CatatanKehadiran::updateOrCreate(
-                [
-                    'user_id' => $user->id,
-                    'tanggal_masuk' => $today
-                ],
-                [
-                    'jenis_kehadiran_id' => $jenisKehadiran->id,
-                    'jam_masuk' => Carbon::now(),
-                    'ip_address_masuk' => $clientIp,
-                ]
-            );
-
-            // Update session
             session(['has_attended_today' => true]);
+            return response()->json(['success' => true, 'message' => 'Absen masuk berhasil. Status: ' . $jenisKehadiran->name]);
 
             return response()->json([
                 'success' => true,
@@ -152,15 +113,13 @@ class kehadiranController extends Controller
                 'data' => [
                     'jam_masuk' => $kehadiran->jam_masuk->format('H:i:s'),
                     'tanggal' => $kehadiran->tanggal_masuk->format('d-m-Y'),
-                    'ip_address' => $clientIp
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error absen masuk: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan pada server.'
             ], 500);
         }
     }
@@ -169,14 +128,19 @@ class kehadiranController extends Controller
     public function absenPulang(Request $request)
     {
         try {
-            $user = Auth::user();
+             $user = Auth::user();
             $clientIp = IpHelper::getClientIp($request);
-            $today = Carbon::today();
+            $now = Carbon::now();
+            $today = $now->today();
 
-            // Cek apakah IP client berada dalam jaringan kantor
+            // Aturan Waktu
+            if ($now->hour < 16) {
+                return response()->json(['success' => false, 'message' => 'Absen pulang baru bisa dilakukan setelah pukul 16:00.'], 400);
+            }
+
+            // Cek jaringan kantor
             $jaringanKantor = JaringanKantor::all();
             $allowedCidrs = $jaringanKantor->pluck('ip_cidr')->toArray();
-
             if (!IpHelper::isIpInOfficeNetwork($clientIp, $allowedCidrs)) {
                 return response()->json([
                     'success' => false,
@@ -184,32 +148,22 @@ class kehadiranController extends Controller
                 ], 403);
             }
 
-            // Cek apakah user sudah absen masuk hari ini
+            // Cari catatan kehadiran hari ini yang belum ada jam pulangnya
             $kehadiran = CatatanKehadiran::where('user_id', $user->id)
                 ->whereDate('tanggal_masuk', $today)
+                ->whereNotNull('jam_masuk')
+                ->whereNull('jam_pulang')
                 ->first();
 
-            if (!$kehadiran || !$kehadiran->jam_masuk) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda belum melakukan absen masuk hari ini'
-                ], 400);
-            }
-
-            if ($kehadiran->jam_pulang) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda sudah melakukan absen pulang hari ini'
-                ], 400);
+            if (!$kehadiran) {
+                return response()->json(['success' => false, 'message' => 'Anda belum absen masuk atau sudah absen pulang hari ini.'], 400);
             }
 
             // Update jam pulang
-            $kehadiran->update([
-                'jam_pulang' => Carbon::now(),
-                'ip_address_pulang' => $clientIp
-            ]);
+            $kehadiran->update(['jam_pulang' => $now, 'ip_address_pulang' => $clientIp]);
+            session(['has_clocked_out_today' => true]);
+            return response()->json(['success' => true, 'message' => 'Absen pulang berhasil dicatat.']);
 
-            // Update session
             session(['has_clocked_out_today' => true]);
 
             return response()->json([
@@ -218,15 +172,13 @@ class kehadiranController extends Controller
                 'data' => [
                     'jam_pulang' => $kehadiran->jam_pulang->format('H:i:s'),
                     'tanggal' => $kehadiran->tanggal_masuk->format('d-m-Y'),
-                    'ip_address' => $clientIp
                 ]
             ]);
-
         } catch (\Exception $e) {
             Log::error('Error absen pulang: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan pada server.'
             ], 500);
         }
     }

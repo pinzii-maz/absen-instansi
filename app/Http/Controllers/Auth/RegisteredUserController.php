@@ -47,13 +47,14 @@ class RegisteredUserController extends Controller
             'nip' => $request->nip,
             'password' => Hash::make($request->password),
             'divisi_id' => $request->divisi_id,
-            'role' => $request->role,
+            'role' => $request->role, 
+            'is_admin' => false,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(RouteServiceProvider::HOME);
+         return redirect('/dashboard');
     }
 }

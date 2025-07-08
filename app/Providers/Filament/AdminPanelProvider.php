@@ -10,7 +10,9 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Navigation\UserMenuItem;
 use Filament\Widgets;
+use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -29,6 +31,17 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->colors([
                 'primary' => Color::Amber,
+            ])
+             ->userMenuItems([
+            UserMenuItem::make()
+            ->label('Dashboard Pegawai')
+            ->url('/dashboard')
+            ->icon('heroicon-s-squares-2x2'),
+    
+            UserMenuItem::make()
+            ->label('Bantuan')
+            ->url('/bantuan')
+            ->icon('heroicon-s-question-mark-circle'),
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -53,6 +66,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
+                  AdminMiddleware::class,
             ]);
     }
 }

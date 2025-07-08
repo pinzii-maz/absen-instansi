@@ -25,11 +25,22 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        $request->authenticate();
+       
+    $request->authenticate();
+    $request->session()->regenerate();
 
-        $request->session()->regenerate();
+    // Dapatkan data lengkap user yang baru saja login
+    $user = Auth::user();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+    // UBAH LOGIKA DI SINI:
+    // Periksa apakah kolom 'is_admin' bernilai true.
+    if ($user->is_admin) {
+        // Jika ya, arahkan ke halaman admin Filament
+        return redirect()->intended(config('filament.path', '/admin'));
+    }
+
+    // Untuk semua role lainnya, arahkan ke dashboard user
+    return redirect()->intended('/dashboard');
     }
 
     /**
