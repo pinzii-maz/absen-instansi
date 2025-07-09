@@ -460,7 +460,50 @@
             }
 
             async function handleIzinSubmit(event) {
-                // ... (Kode submit izin Anda yang sudah ada)
+                event.preventDefault(); // Mencegah form submit dan refresh halaman
+
+                const form = event.target;
+                const formData = new FormData(form);
+                const submitButton = form.querySelector('button[type="submit"]');
+                const originalButtonText = submitButton.innerHTML;
+
+                // Menonaktifkan tombol dan menunjukkan status loading
+                submitButton.disabled = true;
+                submitButton.innerHTML =
+                    `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
+
+                try {
+                    const response = await fetch(
+                    "{{ route('kehadiran.submit-leave') }}", { // Pastikan nama route ini benar
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json' // Penting agar Laravel tahu kita mengharapkan JSON
+                        },
+                        body: formData
+                    });
+
+                    const data = await response.json();
+
+                    if (response.ok) {
+                        showNotification(data.message, 'success'); // Gunakan fungsi notifikasi yang sudah ada
+                        setTimeout(() => {
+                            closeIzinModal();
+                            location.reload(); // Refresh halaman untuk update data
+                        }, 1500);
+                    } else {
+                        // Menampilkan pesan error dari validasi Laravel
+                        showNotification(data.message || 'Terjadi kesalahan validasi.', 'error');
+                    }
+
+                } catch (error) {
+                    console.error('Submission error:', error);
+                    showNotification('Tidak dapat terhubung ke server. Coba lagi nanti.', 'error');
+                } finally {
+                    // Kembalikan tombol ke keadaan semula
+                    submitButton.disabled = false;
+                    submitButton.innerHTML = originalButtonText;
+                }
             }
 
             // --- Fungsi Utilitas ---

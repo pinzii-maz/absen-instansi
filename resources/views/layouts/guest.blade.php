@@ -14,16 +14,24 @@
 
     <!-- AOS CSS -->
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-
+    <link href="{{ asset('css/welcome.css') }}" rel="stylesheet">
+    <link href="{{ asset('css/login.css') }}" rel="stylesheet">
     <!-- Scripts -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+
 </head>
 
-<body class="font-sans antialiased bg-gray-100 min-h-screen flex flex-col justify-center items-center p-4">
-    <div class="w-full max-w-lg mx-auto">
+<body class="font-sans antialiased bg-gray-100 min-h-screen flex flex-col justify-center items-center">
+    <div class="w-full">
         {{ $slot }}
     </div>
     @stack('scripts')
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        AOS.init();
+    </script>
+
+
 </body>
 
 </html>

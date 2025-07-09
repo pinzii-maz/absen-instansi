@@ -1,8 +1,10 @@
 import "./bootstrap";
 
-import Alpine from "alpinejs";
+// Import file CSS utama (untuk Tailwind) dan file login.css kustom Anda
+import "../css/app.css";
+import "../css/login.css"; // <-- Tambahkan baris ini
 
-import "alpinejs";
+import Alpine from "alpinejs";
 
 window.Alpine = Alpine;
 

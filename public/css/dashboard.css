@@ -1,0 +1,268 @@
+/* dashboard-light.css */
+:root {
+    --background-light: #fff5f6;
+    --background-dark: #111827;
+    --card-dark: #1f2937;
+    --text-light: #1a1a1a;
+    --text-dark: #f3f4f6;
+    --accent-dark: #60a5fa;
+    --gradient-dark-start: #1e40af;
+    --gradient-dark-end: #3b82f6;
+}
+
+body {
+    background-color: var(--background-light);
+    min-height: 100vh;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Enhanced card styling */
+.bg-white.rounded-lg {
+    background: rgba(255, 255, 255, 0.8);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.bg-white.rounded-lg:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Quick action buttons */
+.inline-flex {
+    transition: all 0.3s ease;
+}
+
+.inline-flex:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+}
+
+/* SVG icons */
+svg {
+    filter: drop-shadow(0 0 8px rgba(37, 99, 235, 0.1));
+}
+
+/* Additional styles for attendance features */
+.attendance-card {
+    background: rgba(255, 255, 255, 0.1);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.btn-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.welcome-message {
+    font-size: 2rem;
+    font-weight: 600;
+    background: linear-gradient(45deg, #1a365d, #2563eb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 0 0 30px rgba(37, 99, 235, 0.3);
+}
+
+/* Button styling */
+.action-button {
+    background: linear-gradient(45deg, #2563eb, #1e40af);
+    color: white;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    border-radius: 0.5rem;
+}
+
+.action-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* Status indicators */
+.status-indicator {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Floating animation */
+.floating {
+    animation: floating 6s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% {
+        transform: translate(0, 0px);
+    }
+    50% {
+        transform: translate(0, 15px);
+    }
+    100% {
+        transform: translate(0, 0px);
+    }
+}
+
+/* Modal styling */
+.modal-content {
+    background: rgba(255, 255, 255, 0.9);
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 1rem;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* Clock styling */
+.clock-container {
+    background: rgba(255, 255, 255, 0.2);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+}
+
+.clock-text {
+    background: linear-gradient(45deg, #2563eb, #1d4ed8);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+}
+
+/* Form Input Styling */
+select {
+    -webkit-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236B7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.5rem center;
+    background-repeat: no-repeat;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    border: 1px solid #e5e7eb !important;
+    padding: 0.5rem !important;
+    border-radius: 0.5rem !important;
+    width: 100% !important;
+    cursor: pointer !important;
+}
+
+select::-ms-expand {
+    display: none;
+}
+
+select:focus {
+    outline: none !important;
+    border-color: #60a5fa !important;
+    box-shadow: 0 0 0 2px #60a5fa !important;
+}
+
+input[type="date"] {
+    -webkit-appearance: none;
+    appearance: none;
+    color: #374151;
+    background-color: #ffffff;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+    background-color: #ffffff;
+    padding: 5px;
+    cursor: pointer;
+    border-radius: 3px;
+}
+
+/* Animated background patterns */
+.bg-pattern {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-image: radial-gradient(
+            circle at 15% 50%,
+            rgba(37, 99, 235, 0.1) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 85% 30%,
+            rgba(29, 78, 216, 0.1) 0%,
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 50% 80%,
+            rgba(30, 64, 175, 0.1) 0%,
+            transparent 25%
+        );
+    animation: patternMove 20s ease-in-out infinite alternate;
+    z-index: 0;
+}
+
+@keyframes patternMove {
+    0% {
+        transform: scale(1) rotate(0deg);
+    }
+    50% {
+        transform: scale(1.1) rotate(1deg);
+    }
+    100% {
+        transform: scale(1) rotate(0deg);
+    }
+}
+
+/* Logo and Brand Text Styles */
+.navbar-brand-text {
+    margin-left: 0.5rem;
+}
+
+.gradient-text {
+    background: linear-gradient(45deg, #1a365d, #2563eb);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+}
+
+/* Card hover effect */
+.card-hover {
+    transition: all 0.3s ease;
+    padding: 0.5rem;
+    border-radius: 0.5rem;
+}
+
+.card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+    .welcome-message {
+        font-size: 1.5rem;
+    }
+    .dashboard-card {
+        padding: 1rem;
+    }
+    .action-button {
+        padding: 0.5rem 1rem;
+        font-size: 0.75rem;
+    }
+}

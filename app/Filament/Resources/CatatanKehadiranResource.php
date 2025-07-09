@@ -41,19 +41,42 @@ class CatatanKehadiranResource extends Resource
                     ->sortable(),
 
                 // Kolom 2: Jenis Izin
-                TextColumn::make('jenisKehadiran.name')
-                    ->label('Jenis Izin'),
+                 TextColumn::make('jenisKehadiran.name')
+                ->label('Jenis Kehadiran'),
 
-                // Kolom 3: Tanggal Mulai
-                TextColumn::make('tanggal_masuk')
-                    ->date('d M Y')
-                    ->label('Tanggal Mulai')
-                    ->sortable(),
+                 TextColumn::make('tanggal_masuk')
+        ->label('Waktu Pelaksanaan')
+        ->formatStateUsing(function (CatatanKehadiran $record): string {
+            $isDailyAttendance = in_array($record->jenisKehadiran->code, ['H', 'T']);
+            $startDate = \Carbon\Carbon::parse($record->tanggal_masuk)->translatedFormat('d M Y');
 
-                // Kolom 4: Tanggal Selesai
-                TextColumn::make('tanggal_selesai_izin')
-                    ->date('d M Y')
-                    ->label('Tanggal Selesai'),
+            // Jika ini adalah izin (bukan absen harian) dan punya tanggal selesai
+            if (!$isDailyAttendance && $record->tanggal_selesai_izin) {
+                $endDate = \Carbon\Carbon::parse($record->tanggal_selesai_izin)->translatedFormat('d M Y');
+                // Jika tanggal mulai dan selesai sama, tampilkan satu tanggal saja
+                if ($startDate === $endDate) {
+                    return $startDate;
+                }
+                // Jika berbeda, tampilkan sebagai rentang
+                return "{$startDate} - {$endDate}";
+            }
+            
+            // Untuk absensi harian, tampilkan satu tanggal saja
+            return $startDate;
+        })
+        ->sortable(),
+
+    // Kolom baru untuk Jam Masuk
+    TextColumn::make('jam_masuk')
+        ->label('Jam Masuk')
+        ->formatStateUsing(fn (?string $state) => $state ? \Carbon\Carbon::parse($state)->format('H:i:s') : '-')
+        ->alignCenter(),
+
+    // Kolom baru untuk Jam Pulang
+    TextColumn::make('jam_pulang')
+        ->label('Jam Pulang')
+        ->formatStateUsing(fn (?string $state) => $state ? \Carbon\Carbon::parse($state)->format('H:i:s') : '-')
+        ->alignCenter(),
 
                 // Kolom 5: Status (versi modern)
                 TextColumn::make('status_izin')
@@ -97,57 +120,69 @@ class CatatanKehadiranResource extends Resource
                     ->default('menunggu'),
             ])
             ->actions([
-                ActionGroup::make([
-                    Action::make('lihat_keterangan')
-                        ->label('Lihat Keterangan')
-                        ->icon('heroicon-o-chat-bubble-left-ellipsis')
-                        ->color('gray')
-                        ->modalContent(fn (CatatanKehadiran $record): View => view(
-                            'filament.keterangan-izin-modal',
-                            ['record' => $record],
-                        ))
-                        ->modalSubmitAction(false)
-                        ->modalCancelActionLabel('Tutup'),
+            ActionGroup::make([
+                // Aksi untuk melihat keterangan
+                Action::make('lihat_keterangan')
+                    ->label('Lihat Keterangan')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('gray')
+                    ->modalContent(fn (CatatanKehadiran $record): View => view(
+                        'filament.keterangan-izin-modal',
+                        ['record' => $record],
+                    ))
+                    ->modalSubmitAction(false)
+                    ->modalCancelActionLabel('Tutup'),
 
-                    Action::make('setujui')
-                        ->label('Setujui')
-                        ->icon('heroicon-o-check-circle')
-                        ->color('success')
-                        ->requiresConfirmation()
-                        ->action(function (CatatanKehadiran $record) {
-                            $record->update(['status_izin' => 'disetujui', 'approved_by' => auth()->id()]);
-                            Notification::make()->title('Izin berhasil disetujui')->success()->send();
-                        })
-                        ->visible(fn (?CatatanKehadiran $record): bool => $record && $record->status_izin === 'menunggu'),
+                // Aksi untuk menyetujui
+                Action::make('setujui')
+                    ->label('Setujui')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->requiresConfirmation()
+                    ->action(function (CatatanKehadiran $record) {
+                        $record->update(['status_izin' => 'disetujui', 'approved_by' => auth()->id()]);
+                        Notification::make()->title('Izin berhasil disetujui')->success()->send();
+                    })
+                    ->visible(fn (?CatatanKehadiran $record): bool => $record && $record->status_izin === 'menunggu'),
 
-                    Action::make('tolak')
-                        ->label('Tolak')
-                        ->icon('heroicon-o-x-circle')
-                        ->color('danger')
-                        ->form([
-                            Forms\Components\TextInput::make('alasan_penolakan')
-                                ->label('Alasan Penolakan')
-                                ->required()
-                        ])
-                        ->action(function (CatatanKehadiran $record, array $data) {
-                            $record->update([
-                                'status_izin' => 'ditolak',
-                                'approved_by' => auth()->id(),
-                                'alasan_penolakan' => $data['alasan_penolakan']
-                            ]);
-                            Notification::make()->title('Izin telah ditolak')->danger()->send();
-                        })
-                        ->visible(fn (?CatatanKehadiran $record): bool => $record && $record->status_izin === 'menunggu'),
-                ])
+                // Aksi untuk menolak
+                Action::make('tolak')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->form([
+                        Forms\Components\TextInput::make('alasan_penolakan')
+                            ->label('Alasan Penolakan')
+                            ->required()
+                    ])
+                    ->action(function (CatatanKehadiran $record, array $data) {
+                        $record->update([
+                            'status_izin' => 'ditolak',
+                            'approved_by' => auth()->id(),
+                            'alasan_penolakan' => $data['alasan_penolakan']
+                        ]);
+                        Notification::make()->title('Izin telah ditolak')->danger()->send();
+                    })
+                    ->visible(fn (?CatatanKehadiran $record): bool => $record && $record->status_izin === 'menunggu'),
+                
+                // ✅ AKSI HAPUS SEKARANG BERADA DI LEVEL YANG BENAR
+                \Filament\Tables\Actions\DeleteAction::make()
+                    ->label('Batalkan/Hapus Absen')
+                    ->requiresConfirmation()
+                    ->modalHeading('Batalkan Absensi Pegawai')
+                    ->modalSubheading('Apakah Anda yakin ingin menghapus data absensi ini? Tindakan ini tidak dapat diurungkan.')
+                    ->modalButton('Ya, Hapus'),
             ])
+        ])
             ->bulkActions([]);
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()->whereHas('jenisKehadiran', function ($query) {
-            $query->whereNotIn('code', ['H', 'P']);
-        });
+        // return parent::getEloquentQuery()->whereHas('jenisKehadiran', function ($query) {
+        //     $query->whereNotIn('code', ['H', 'P']);
+        // });
+        return parent::getEloquentQuery();
     }
 
     public static function canCreate(): bool

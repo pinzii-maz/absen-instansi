@@ -42,13 +42,18 @@ class kehadiranController extends Controller
 
         $totalAttendance = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
-            ->whereNotNull('jam_masuk')->count();
+            ->whereNotNull('jam_masuk')
+            ->whereNotNull('jam_pulang')
+            ->count();
+
 
         $totalTepatWaktu = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
-            ->whereNotNull('jam_masuk')->whereTime('jam_masuk', '<=', '10:00:00')->count();
+            ->whereNotNull('jam_masuk')
+            ->whereNotNull('jam_pulang')
+            ->whereTime('jam_masuk', '<=', '10:00:00')->count();
         
-        $onTimePercentage = ($totalAttendance > 0) ? round(($totalTepatWaktu / $totalAttendance) * 100) : 0;
+          $onTimePercentage = ($totalAttendance > 0) ? round(($totalTepatWaktu / $totalAttendance) * 100) : 0;
 
         $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C', 'DL', 'TL'])->get();
 
@@ -244,6 +249,7 @@ class kehadiranController extends Controller
                 'tanggal_selesai_izin' => $endDate,
                 'keterangan_izin' => $request->input('keterangan'),
                 'file_pendukung_izin' => $filePath,
+                'status_izin' => 'menunggu',
             ]);
             
             // Update session jika izin mencakup hari ini
