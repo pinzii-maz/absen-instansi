@@ -172,12 +172,15 @@
                                         class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Status</th>
                                     <th
-                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">
-                                        Keterangan</th>
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Keterangan Pegawai</th>
+                                    {{-- ✅ KOLOM BARU DITAMBAHKAN DI SINI --}}
+                                    <th
+                                        class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        Catatan dari Admin</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
-                                {{-- Pastikan nama variabelnya '$leaveRequests' --}}
                                 @forelse($leaveRequests as $request)
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap text-sm text-gray-900">
@@ -189,26 +192,36 @@
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 whitespace-nowrap">
                                             @php
-                                                // PERBAIKI: Gunakan 'status_izin' dan 'menunggu'
                                                 $statusClass =
                                                     [
-                                                        'menunggu' => 'bg-yellow-100 text-yellow-800', // Ganti 'proses' menjadi 'menunggu'
+                                                        'menunggu' => 'bg-yellow-100 text-yellow-800',
                                                         'disetujui' => 'bg-green-100 text-green-800',
                                                         'ditolak' => 'bg-red-100 text-red-800',
-                                                    ][$request->status_izin] ?? 'bg-gray-100 text-gray-800'; // Ganti $request->status menjadi $request->status_izin
+                                                    ][$request->status_izin] ?? 'bg-gray-100 text-gray-800';
                                             @endphp
                                             <span
                                                 class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $statusClass }}">
-                                                {{ ucfirst($request->status_izin) }} {{-- Ganti $request->status menjadi $request->status_izin --}}
+                                                {{ ucfirst($request->status_izin) }}
                                             </span>
                                         </td>
                                         <td class="px-4 sm:px-6 py-4 text-sm text-gray-900 break-words">
                                             {{ $request->keterangan_izin }}
                                         </td>
+                                        {{-- ✅ SEL BARU DITAMBAHKAN DI SINI --}}
+                                        <td class="px-4 sm:px-6 py-4 text-sm text-gray-700 break-words">
+                                            {{-- Tampilkan alasan penolakan hanya jika statusnya 'ditolak' --}}
+                                            @if ($request->status_izin === 'ditolak')
+                                                <span
+                                                    class="text-red-600 font-medium">{{ $request->alasan_penolakan ?? 'Tidak ada catatan.' }}</span>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="4"
+                                        {{-- ✅ colspan diubah menjadi 5 karena ada tambahan kolom --}}
+                                        <td colspan="5"
                                             class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
                                             Belum ada pengajuan izin
                                         </td>
@@ -372,7 +385,7 @@
             async function periksaStatusJaringan() {
                 if (!statusContainer) return;
                 const iconLoading =
-                `<svg class="animate-spin text-blue-500 w-5 h-5" ...></svg>`; // SVG Asli Anda
+                    `<svg class="animate-spin text-blue-500 w-5 h-5" ...></svg>`; // SVG Asli Anda
                 const iconCentang = `<svg class="text-green-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
                 const iconSilang = `<svg class="text-red-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
 
