@@ -89,21 +89,6 @@
                                         Ajukan Izin
                                     </button>
                                 </div>
-
-                                <div id="wifiStatus"
-                                    class="mt-3 sm:mt-4 bg-gray-50 rounded-lg p-3 sm:p-4 shadow-sm border border-gray-200 transition-all duration-300">
-                                    <div class="flex items-center gap-2">
-                                        <!-- Tambah gap-2 dan pastikan items-center -->
-                                        {{-- Kita beri ID agar ikonnya bisa diganti --}}
-                                        <div id="wifiIcon" class="w-6 h-6 mr-0 flex items-center justify-center">
-                                            <!-- w-6 h-6, hilangkan mr-2 -->
-                                            <!-- Icon akan diisi JS -->
-                                        </div>
-                                        {{-- Kita beri ID agar teksnya bisa diganti --}}
-                                        <span id="wifiText" class="text-sm sm:text-base text-gray-700">Memeriksa
-                                            koneksi...</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -221,8 +206,7 @@
                                 @empty
                                     <tr>
                                         {{-- ✅ colspan diubah menjadi 5 karena ada tambahan kolom --}}
-                                        <td colspan="5"
-                                            class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
+                                        <td colspan="5" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
                                             Belum ada pengajuan izin
                                         </td>
                                     </tr>
@@ -295,28 +279,26 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload Surat Pendukung</label>
-                    <div
-                        class="mt-1 flex justify-center px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-6 border-2 border-gray-300 border-dashed rounded-lg">
-                        <div class="space-y-1 text-center">
-                            <svg class="mx-auto h-10 sm:h-12 w-10 sm:w-12 text-gray-400" stroke="currentColor"
-                                fill="none" viewBox="0 0 48 48">
+
+                    <label for="file-upload"
+                        class="mt-1 flex justify-center items-center w-full px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-400 transition-colors duration-200">
+
+                        <div id="file-upload-ui" class="text-center">
+                            <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
+                                viewBox="0 0 48 48">
                                 <path
                                     d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
                                     stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                             </svg>
-                            <div class="flex text-sm text-gray-600">
-                                <label for="file-upload"
-                                    class="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                                    <span>Upload file</span>
-                                    <input id="file-upload" name="surat" type="file" class="sr-only">
-                                </label>
-                                <p class="pl-1">atau drag and drop</p>
-                            </div>
-                            <p class="text-xs text-gray-500">PDF, DOC up to 10MB</p>
+                            <p class="mt-2 text-sm text-gray-600">
+                                <span class="font-medium text-blue-600">Upload file</span> atau drag and drop
+                            </p>
+                            <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
                         </div>
-                    </div>
-                </div>
+                    </label>
 
+                    <input id="file-upload" name="surat[]" type="file" class="sr-only" multiple>
+                </div>
                 <div class="flex justify-end space-x-3 sm:space-x-4 mt-6 sm:mt-8">
                     <button type="button" onclick="closeIzinModal()"
                         class="px-4 sm:px-6 py-2 sm:py-2.5 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-all duration-300 text-sm sm:text-base">
@@ -327,8 +309,12 @@
                         Kirim Pengajuan
                     </button>
                 </div>
-            </form>
         </div>
+    </div>
+
+
+    </form>
+    </div>
     </div>
 
     <script>
@@ -353,6 +339,36 @@
             const izinForm = document.getElementById('izinForm');
             const btnCloseModal = izinModal?.querySelector('button[onclick="closeIzinModal()"]'); // Tombol 'X'
             const btnBatalIzin = izinForm?.querySelector('button[type="button"]'); // Tombol 'Batal'
+
+            const fileInput = document.getElementById('file-upload');
+            const fileUploadUI = document.getElementById('file-upload-ui');
+
+            if (fileInput && fileUploadUI) {
+                // Simpan konten awal dari UI
+                const originalUploadUI = fileUploadUI.innerHTML;
+
+                fileInput.addEventListener('change', function() {
+                    if (this.files && this.files.length > 0) {
+
+                        // Jika hanya satu file
+                        if (this.files.length === 1) {
+                            const fileName = this.files[0].name;
+                            fileUploadUI.innerHTML = `
+                    <div class="flex flex-col items-center justify-center text-center">
+                        <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        <p class="text-sm font-medium text-gray-700 break-all mt-2">${fileName}</p>
+                        <p class="text-xs text-gray-500 mt-2">Klik lagi untuk mengganti file.</p>
+                    </div>
+                `;
+                        }
+
+
+                    } else {
+                        // Kembalikan ke UI awal jika tidak ada file yang dipilih
+                        fileUploadUI.innerHTML = originalUploadUI;
+                    }
+                });
+            }
 
             // Status Kehadiran dari Server (PHP)
             const hasAttendedToday = {{ session('has_attended_today') ? 'true' : 'false' }};
@@ -382,38 +398,6 @@
                 });
             }
 
-            async function periksaStatusJaringan() {
-                if (!statusContainer) return;
-                const iconLoading =
-                    `<svg class="animate-spin text-blue-500 w-5 h-5" ...></svg>`; // SVG Asli Anda
-                const iconCentang = `<svg class="text-green-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
-                const iconSilang = `<svg class="text-red-500 w-6 h-6" ...></svg>`; // SVG Asli Anda
-
-                statusIcon.innerHTML = iconLoading;
-                statusText.textContent = "Memeriksa koneksi...";
-
-                try {
-                    const response = await fetch("{{ route('kehadiran.cek-jaringan') }}");
-                    const data = await response.json();
-                    statusContainer.classList.remove('bg-gray-50', 'border-gray-200');
-
-                    if (data.status === 'allowed') {
-                        statusIcon.innerHTML = iconCentang;
-                        statusText.textContent = 'Terhubung ke jaringan kantor.';
-                        statusContainer.classList.add('bg-green-50', 'border-green-300');
-                    } else {
-                        statusIcon.innerHTML = iconSilang;
-                        statusText.textContent = 'Tidak terhubung ke jaringan kantor.';
-                        statusContainer.classList.add('bg-red-50', 'border-red-300');
-                    }
-                } catch (error) {
-                    console.error('Gagal memeriksa status jaringan:', error);
-                    statusIcon.innerHTML = iconSilang;
-                    statusText.textContent = 'Gagal memeriksa status jaringan.';
-                    statusContainer.classList.add('bg-red-50', 'border-red-300');
-                }
-            }
-
             async function handleAttendance(type) {
                 const button = (type === 'masuk') ? btnAbsenMasuk : btnAbsenPulang;
                 const route = (type === 'masuk') ? "{{ route('kehadiran.masuk') }}" :
@@ -422,7 +406,7 @@
 
                 button.disabled = true;
                 button.innerHTML =
-                    `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" ...></svg> Memproses...`;
+                    `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
 
                 try {
                     const response = await fetch(route, {
@@ -433,12 +417,12 @@
                             'Accept': 'application/json'
                         }
                     });
-                    const data = await response.json();
+                    const result = await response.json();
 
-                    showNotification(data.message, data.success ? 'success' : 'error');
+                    showNotification(result.message, result.success ? 'success' : 'error');
 
-                    if (data.success) {
-                        setTimeout(() => location.reload(), 1500);
+                    if (result.success) {
+                        setTimeout(() => window.location.reload(), 1500);
                     } else {
                         button.innerHTML = originalButtonText;
                         updateButtonStates();
@@ -474,14 +458,14 @@
 
                 try {
                     const response = await fetch(
-                    "{{ route('kehadiran.submit-leave') }}", { // Pastikan nama route ini benar
-                        method: 'POST',
-                        headers: {
-                            'X-CSRF-TOKEN': csrfToken,
-                            'Accept': 'application/json' // Penting agar Laravel tahu kita mengharapkan JSON
-                        },
-                        body: formData
-                    });
+                        "{{ route('kehadiran.submit-leave') }}", { // Pastikan nama route ini benar
+                            method: 'POST',
+                            headers: {
+                                'X-CSRF-TOKEN': csrfToken,
+                                'Accept': 'application/json' // Penting agar Laravel tahu kita mengharapkan JSON
+                            },
+                            body: formData
+                        });
 
                     const data = await response.json();
 
@@ -518,15 +502,11 @@
             // Pasang listener untuk tombol-tombol utama
             if (btnAbsenMasuk) btnAbsenMasuk.addEventListener('click', () => handleAttendance('masuk'));
             if (btnAbsenPulang) btnAbsenPulang.addEventListener('click', () => handleAttendance('pulang'));
-
-            // Pasang listener untuk Modal Izin
             if (btnShowIzinModal) btnShowIzinModal.addEventListener('click', showIzinModal);
             if (izinForm) izinForm.addEventListener('submit', handleIzinSubmit);
-            if (btnCloseModal) btnCloseModal.addEventListener('click', closeIzinModal);
-            if (btnBatalIzin) btnBatalIzin.addEventListener('click', closeIzinModal);
+
 
             // Jalankan fungsi inisialisasi saat halaman dimuat
-            periksaStatusJaringan();
             updateButtonStates();
 
             // Atur interval untuk auto-update status tombol setiap menit

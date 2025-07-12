@@ -32,6 +32,7 @@ class CatatanKehadiran extends Model
     protected $casts = [
         'tanggal_masuk' => 'date',
         'tanggal_selesai_izin' => 'date',
+        'file_pendukung_izin' => 'array',
     ];
 
     public function user()

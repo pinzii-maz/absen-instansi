@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\IpHelper; // ✅ Perbaikan import
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\JaringanKantor;
 use App\Models\JenisKehadiran;
-use App\Helpers\KehadiranHelper;
 use App\Models\CatatanKehadiran;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 
 class kehadiranController extends Controller
@@ -74,10 +71,9 @@ class kehadiranController extends Controller
     // ✅ Method absenMasuk yang hilang
     public function absenMasuk(Request $request)
     {
-        try {
-              $user = Auth::user();
-            $clientIp = IpHelper::getClientIp($request);
-            $now = Carbon::now(); // Sekarang akan menggunakan timezone 'Asia/Makassar'
+          try {
+            $user = Auth::user();
+            $now = Carbon::now();
             $today = $now->today();
 
             // Aturan Waktu
@@ -85,72 +81,48 @@ class kehadiranController extends Controller
                 return response()->json(['success' => false, 'message' => 'Absen masuk baru dibuka pukul 08:00.'], 400);
             }
 
-            // Cek jaringan kantor (logika Anda tetap dipertahankan)
-            $jaringanKantor = JaringanKantor::all();
-            $allowedCidrs = $jaringanKantor->pluck('ip_cidr')->toArray();
-            if (!IpHelper::isIpInOfficeNetwork($clientIp, $allowedCidrs)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda tidak berada dalam jaringan kantor. IP Anda: ' . $clientIp
-                ], 403);
+            // Cek apakah sudah ada catatan kehadiran hari ini
+            $existingAbsen = CatatanKehadiran::where('user_id', $user->id)
+                ->whereDate('tanggal_masuk', $today)
+                ->first();
+
+            if ($existingAbsen) {
+                return response()->json(['success' => false, 'message' => 'Anda sudah tercatat hadir atau mengajukan izin hari ini.'], 400);
             }
 
-             // Tentukan status Hadir (H) atau Terlambat (T)
+            // Tentukan status Hadir (H) atau Terlambat (T)
             $jenisKehadiranCode = ($now->hour < 10) ? 'H' : 'T';
             $jenisKehadiran = JenisKehadiran::where('code', $jenisKehadiranCode)->firstOrFail();
 
             // Simpan data
-            $kehadiran = CatatanKehadiran::create([
+            CatatanKehadiran::create([
                 'user_id' => $user->id,
                 'tanggal_masuk' => $today,
                 'jenis_kehadiran_id' => $jenisKehadiran->id,
                 'jam_masuk' => $now,
-                'ip_address_masuk' => $clientIp,
+                'ip_address_masuk' => $request->ip(), // IP tetap disimpan untuk catatan
                 'status_izin' => 'disetujui'
             ]);
 
             session(['has_attended_today' => true]);
             return response()->json(['success' => true, 'message' => 'Absen masuk berhasil. Status: ' . $jenisKehadiran->name]);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Absen masuk berhasil dicatat',
-                'data' => [
-                    'jam_masuk' => $kehadiran->jam_masuk->format('H:i:s'),
-                    'tanggal' => $kehadiran->tanggal_masuk->format('d-m-Y'),
-                ]
-            ]);
         } catch (\Exception $e) {
             Log::error('Error absen masuk: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan pada server.'
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
 
-    // ✅ Method absenPulang yang hilang
     public function absenPulang(Request $request)
     {
-        try {
-             $user = Auth::user();
-            $clientIp = IpHelper::getClientIp($request);
+         try {
+            $user = Auth::user();
             $now = Carbon::now();
             $today = $now->today();
 
             // Aturan Waktu
             if ($now->hour < 16) {
                 return response()->json(['success' => false, 'message' => 'Absen pulang baru bisa dilakukan setelah pukul 16:00.'], 400);
-            }
-
-            // Cek jaringan kantor
-            $jaringanKantor = JaringanKantor::all();
-            $allowedCidrs = $jaringanKantor->pluck('ip_cidr')->toArray();
-            if (!IpHelper::isIpInOfficeNetwork($clientIp, $allowedCidrs)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Anda tidak berada dalam jaringan kantor. IP Anda: ' . $clientIp
-                ], 403);
             }
 
             // Cari catatan kehadiran hari ini yang belum ada jam pulangnya
@@ -165,114 +137,89 @@ class kehadiranController extends Controller
             }
 
             // Update jam pulang
-            $kehadiran->update(['jam_pulang' => $now, 'ip_address_pulang' => $clientIp]);
+            $kehadiran->update([
+                'jam_pulang' => $now, 
+                'ip_address_pulang' => $request->ip() // IP tetap disimpan untuk catatan
+            ]);
             session(['has_clocked_out_today' => true]);
             return response()->json(['success' => true, 'message' => 'Absen pulang berhasil dicatat.']);
 
-            session(['has_clocked_out_today' => true]);
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Absen pulang berhasil dicatat',
-                'data' => [
-                    'jam_pulang' => $kehadiran->jam_pulang->format('H:i:s'),
-                    'tanggal' => $kehadiran->tanggal_masuk->format('d-m-Y'),
-                ]
-            ]);
         } catch (\Exception $e) {
             Log::error('Error absen pulang: ' . $e->getMessage());
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan pada server.'
-            ], 500);
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan pada server.'], 500);
         }
     }
 
-    // ✅ Method izin yang hilang
-        public function izin()
-        {
-            dd('Method Izin Dijalankan!');
-            
-            $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C'])->get(); // Sakit, Izin, Cuti
-            return view('kehadiran.izin', compact('jenisKehadiran'));
+    public function izin()
+    {
+        $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C'])->get(); // Sakit, Izin, Cuti
+        return view('kehadiran.izin', compact('jenisKehadiran'));
+    }
+
+    public function submitLeave(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'jenis_izin' => 'required|string|exists:jenis_kehadiran,code',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'keterangan' => 'required|string|max:1000',
+            'surat.*' => 'nullable|file|mimes:pdf,doc,docx|max:10240'
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
         }
 
-        public function submitLeave(Request $request)
-        {
-            // dd($request->all());
+        $user = Auth::user();
+        $clientIp = $request->ip();
+        $now = Carbon::now();
+        
+        $jenisKehadiran = JenisKehadiran::where('code', $request->input('jenis_izin'))->first();
+        if (!$jenisKehadiran) {
+            return response()->json(['success' => false, 'message' => 'Jenis izin tidak valid.'], 400);
+        }
 
-            $validator = Validator::make($request->all(), [
-                'jenis_izin' => 'required|string|exists:jenis_kehadiran,code', // Pastikan kode jenis izin ada di tabel
-                'tanggal_mulai' => 'required|date',
-                'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-                'keterangan' => 'required|string|max:1000',
-                'surat' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:5120', // max 5MB
-            ]);
+        $startDate = Carbon::parse($request->input('tanggal_mulai'));
+        $endDate = Carbon::parse($request->input('tanggal_selesai'));
 
-            if ($validator->fails()) {
-                return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
-            }
+        $filePaths = []; // 1. Siapkan array kosong untuk menampung path file.
 
-            $user = Auth::user();
-            $clientIp = $request->ip();
-            $now = Carbon::now();
-            
-            $jenisKehadiran = JenisKehadiran::where('code', $request->input('jenis_izin'))->first();
-            if (!$jenisKehadiran) { // Seharusnya sudah divalidasi oleh 'exists' rule
-                return response()->json(['success' => false, 'message' => 'Jenis izin tidak valid.'], 400);
-            }
+    if ($request->hasFile('surat')) {
+        // 2. Lakukan perulangan untuk setiap file yang diunggah.
+        foreach ($request->file('surat') as $file) {
+            // Simpan file dan tambahkan path-nya ke array $filePaths.
+            $path = $file->store('public/surat_izin');
+            $filePaths[] = str_replace('public/', '', $path); // Hapus 'public/' agar URL-nya benar
+        }
+    }
 
-            $startDate = Carbon::parse($request->input('tanggal_mulai'));
-            $endDate = Carbon::parse($request->input('tanggal_selesai'));
-
-            $overlappingRecord = CatatanKehadiran::where('user_id', $user->id)
+        $overlappingRecord = CatatanKehadiran::where('user_id', $user->id)
             ->whereIn('status_izin', ['menunggu', 'disetujui'])
             ->where(function ($query) use ($startDate, $endDate) {
                 $query->where(function ($q) use ($startDate, $endDate) {
                     $q->where('tanggal_masuk', '<=', $endDate)
-                        ->whereRaw('COALESCE(tanggal_selesai_izin, tanggal_masuk) >= ?', [$startDate]);
+                      ->whereRaw('COALESCE(tanggal_selesai_izin, tanggal_masuk) >= ?', [$startDate]);
                 });
             })
-                ->exists();
+            ->exists();
 
-            $filePath = null;
-            if ($request->hasFile('surat')) {
-                $filePath = $request->file('surat')->store('public/surat_izin'); // Simpan ke storage/app/public/surat_izin
-            }
-
-            CatatanKehadiran::create([
-                'user_id' => $user->id,
-                'jenis_kehadiran_id' => $jenisKehadiran->id,
-                'tanggal_masuk' => $startDate, // Tanggal mulai izin
-                'jam_masuk' => null, // Untuk izin, jam masuk bisa null
-                'ip_address_masuk' => $clientIp,
-                'tanggal_selesai_izin' => $endDate,
-                'keterangan_izin' => $request->input('keterangan'),
-                'file_pendukung_izin' => $filePath,
-                'status_izin' => 'menunggu',
-            ]);
-            
-            // Update session jika izin mencakup hari ini
-            if ($now->betweenIncluded($startDate, $endDate->endOfDay())) {
-                session(['has_attended_today' => true]);
-                session()->forget('has_clocked_out_today');
-            }
-
-            return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
+        CatatanKehadiran::create([
+            'user_id' => $user->id,
+            'jenis_kehadiran_id' => $jenisKehadiran->id,
+            'tanggal_masuk' => $startDate,
+            'jam_masuk' => null,
+            'ip_address_masuk' => $clientIp,
+            'tanggal_selesai_izin' => $endDate,
+            'keterangan_izin' => $request->input('keterangan'),
+            'file_pendukung_izin' => count($filePaths) > 0 ? json_encode($filePaths) : null,
+            'status_izin' => 'menunggu',
+        ]);
+        
+        if ($now->betweenIncluded($startDate, $endDate->endOfDay())) {
+            session(['has_attended_today' => true]);
+            session()->forget('has_clocked_out_today');
         }
 
-         public function cekJaringan(Request $request)
-    {
-        $clientIp = IpHelper::getClientIp($request);
-        $officeNetworks = JaringanKantor::pluck('ip_cidr')->all();
-
-        if (IpHelper::isIpInOfficeNetwork($clientIp, $officeNetworks)) {
-            // Jika IP valid, kirim status 'allowed'
-            return response()->json(['status' => 'allowed', 'ip' => $clientIp]);
-        } else {
-            // Jika IP tidak valid, kirim status 'denied'
-            return response()->json(['status' => 'denied', 'ip' => $clientIp]);
-        }
-    }
-    
+        return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
+    }    
 }

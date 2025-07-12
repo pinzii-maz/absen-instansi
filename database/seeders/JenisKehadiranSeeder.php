@@ -14,6 +14,7 @@ class JenisKehadiranSeeder extends Seeder
     public function run(): void
     {
         JenisKehadiran::updateOrCreate(['code' => 'H'], ['name' => 'Hadir (Masuk)', 'diperbolehkan_di_luar_jaringan' => false]);
+        JenisKehadiran::updateOrCreate(['code' => 'T'], ['name' => 'Terlambat', 'diperbolehkan_di_luar_jaringan' => false]); // ✅ TAMBAHKAN BARIS INI
         JenisKehadiran::updateOrCreate(['code' => 'P'], ['name' => 'Hadir (Pulang)', 'diperbolehkan_di_luar_jaringan' => false]);
         JenisKehadiran::updateOrCreate(['code' => 'S'], ['name' => 'Sakit', 'diperbolehkan_di_luar_jaringan' => true]);
         JenisKehadiran::updateOrCreate(['code' => 'I'], ['name' => 'Izin Lainnya', 'diperbolehkan_di_luar_jaringan' => true]);

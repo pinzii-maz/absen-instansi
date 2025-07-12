@@ -14,11 +14,11 @@ class JaringanKantorSeeder extends Seeder
         public function run(): void
         {
             JaringanKantor::updateOrCreate(
-                ['name' => 'Semanggi Putra 2'], 
+                ['name' => 'BIRO-HUMAS-II'], 
         [ // Hanya satu array untuk data
-            'ssid' => 'Semanggi Putra 2',
-            'ip_cidr' => '192.168.1.0/24'
+            'ssid' => 'BIRO-HUMAS-II',
+            'ip_cidr' => '172.16.31.82',
         ]
             );
         }
-}
+} 
