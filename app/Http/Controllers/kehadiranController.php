@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use App\Models\JaringanKantor;
 use App\Models\JenisKehadiran;
 use App\Models\CatatanKehadiran;
 use Illuminate\Support\Facades\Log;
@@ -14,7 +13,7 @@ use Illuminate\Support\Facades\Validator;
 class kehadiranController extends Controller
 {
     public function dashboard() {
-         $user = Auth::user();
+        $user = Auth::user();
         $today = Carbon::today();
 
         // Cek ke database HANYA untuk catatan hari ini yang sudah ada jam masuknya.
@@ -32,8 +31,7 @@ class kehadiranController extends Controller
             'has_clocked_out_today' => (bool)$absenPulangHariIni,
         ]);
 
-
-        // Sisa kode untuk statistik dan data lainnya (tidak perlu diubah)
+        // Sisa kode untuk statistik dan data lainnya
         $currentMonthStart = $today->copy()->startOfMonth();
         $currentMonthEnd = $today->copy()->endOfMonth();
 
@@ -43,14 +41,13 @@ class kehadiranController extends Controller
             ->whereNotNull('jam_pulang')
             ->count();
 
-
         $totalTepatWaktu = CatatanKehadiran::where('user_id', $user->id)
             ->whereBetween('tanggal_masuk', [$currentMonthStart, $currentMonthEnd])
             ->whereNotNull('jam_masuk')
             ->whereNotNull('jam_pulang')
             ->whereTime('jam_masuk', '<=', '10:00:00')->count();
         
-          $onTimePercentage = ($totalAttendance > 0) ? round(($totalTepatWaktu / $totalAttendance) * 100) : 0;
+        $onTimePercentage = ($totalAttendance > 0) ? round(($totalTepatWaktu / $totalAttendance) * 100) : 0;
 
         $jenisKehadiran = JenisKehadiran::whereIn('code', ['S', 'I', 'C', 'DL', 'TL'])->get();
 
@@ -68,10 +65,9 @@ class kehadiranController extends Controller
         return view('dashboard', compact('totalAttendance', 'onTimePercentage', 'jenisKehadiran', 'leaveRequests', 'pegawaiInfo'));
     }
 
-    // ✅ Method absenMasuk yang hilang
     public function absenMasuk(Request $request)
     {
-          try {
+        try {
             $user = Auth::user();
             $now = Carbon::now();
             $today = $now->today();
@@ -100,7 +96,6 @@ class kehadiranController extends Controller
                 'tanggal_masuk' => $today,
                 'jenis_kehadiran_id' => $jenisKehadiran->id,
                 'jam_masuk' => $now,
-                'ip_address_masuk' => $request->ip(), // IP tetap disimpan untuk catatan
                 'status_izin' => 'disetujui'
             ]);
 
@@ -115,7 +110,7 @@ class kehadiranController extends Controller
 
     public function absenPulang(Request $request)
     {
-         try {
+        try {
             $user = Auth::user();
             $now = Carbon::now();
             $today = $now->today();
@@ -137,10 +132,7 @@ class kehadiranController extends Controller
             }
 
             // Update jam pulang
-            $kehadiran->update([
-                'jam_pulang' => $now, 
-                'ip_address_pulang' => $request->ip() // IP tetap disimpan untuk catatan
-            ]);
+            $kehadiran->update(['jam_pulang' => $now]);
             session(['has_clocked_out_today' => true]);
             return response()->json(['success' => true, 'message' => 'Absen pulang berhasil dicatat.']);
 
@@ -163,7 +155,7 @@ class kehadiranController extends Controller
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'keterangan' => 'required|string|max:1000',
-            'surat.*' => 'nullable|file|mimes:pdf,doc,docx|max:10240'
+            'surat.*' => 'nullable|file|mimes:pdf,doc,docx,jpg,jpeg,png|max:10240'
         ]);
 
         if ($validator->fails()) {
@@ -171,7 +163,6 @@ class kehadiranController extends Controller
         }
 
         $user = Auth::user();
-        $clientIp = $request->ip();
         $now = Carbon::now();
         
         $jenisKehadiran = JenisKehadiran::where('code', $request->input('jenis_izin'))->first();
@@ -182,16 +173,16 @@ class kehadiranController extends Controller
         $startDate = Carbon::parse($request->input('tanggal_mulai'));
         $endDate = Carbon::parse($request->input('tanggal_selesai'));
 
-        $filePaths = []; // 1. Siapkan array kosong untuk menampung path file.
+        $filePaths = []; // Siapkan array kosong untuk menampung path file.
 
-    if ($request->hasFile('surat')) {
-        // 2. Lakukan perulangan untuk setiap file yang diunggah.
-        foreach ($request->file('surat') as $file) {
-            // Simpan file dan tambahkan path-nya ke array $filePaths.
-            $path = $file->store('public/surat_izin');
-            $filePaths[] = str_replace('public/', '', $path); // Hapus 'public/' agar URL-nya benar
+        if ($request->hasFile('surat')) {
+            // Lakukan perulangan untuk setiap file yang diunggah.
+            foreach ($request->file('surat') as $file) {
+                // Simpan file dan tambahkan path-nya ke array $filePaths.
+                $path = $file->store('public/surat_izin');
+                $filePaths[] = str_replace('public/', '', $path); // Hapus 'public/' agar URL-nya benar
+            }
         }
-    }
 
         $overlappingRecord = CatatanKehadiran::where('user_id', $user->id)
             ->whereIn('status_izin', ['menunggu', 'disetujui'])
@@ -208,7 +199,6 @@ class kehadiranController extends Controller
             'jenis_kehadiran_id' => $jenisKehadiran->id,
             'tanggal_masuk' => $startDate,
             'jam_masuk' => null,
-            'ip_address_masuk' => $clientIp,
             'tanggal_selesai_izin' => $endDate,
             'keterangan_izin' => $request->input('keterangan'),
             'file_pendukung_izin' => count($filePaths) > 0 ? json_encode($filePaths) : null,
@@ -221,5 +211,5 @@ class kehadiranController extends Controller
         }
 
         return response()->json(['success' => true, 'message' => 'Pengajuan izin berhasil dikirim.']);
-    }    
+    }
 }

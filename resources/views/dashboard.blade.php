@@ -96,7 +96,6 @@
             </div>
 
             <!-- Employee Information Section -->
-            {{-- Ganti blok "Informasi Pegawai" Anda dengan ini --}}
             <div
                 class="bg-white rounded-xl shadow-lg transform transition-all duration-300 hover:shadow-2xl mb-6 sm:mb-8">
                 <div class="p-6 sm:p-8">
@@ -109,24 +108,17 @@
                         Informasi Pegawai
                     </h3>
 
-                    {{-- PERBAIKAN RESPONSIVE & DINAMIS DIMULAI DI SINI --}}
-                    {{-- 1 kolom di layar kecil, 2 kolom di layar medium ke atas --}}
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-
-                        {{-- Loop melalui semua data yang disiapkan di controller --}}
                         @foreach ($pegawaiInfo as $info)
                             <div
                                 class="bg-gray-50 rounded-lg p-4 border border-gray-200 hover:shadow-sm transition-shadow duration-300">
                                 <h4 class="text-sm font-medium text-gray-500 mb-1">{{ $info['label'] }}</h4>
-                                {{-- Tampilkan 'Tidak ada data' jika nilainya kosong --}}
                                 <p class="text-base font-semibold text-gray-900 break-words">
                                     {{ $info['value'] ?? '-' }}
                                 </p>
                             </div>
                         @endforeach
-
                     </div>
-                    {{-- PERBAIKAN SELESAI --}}
                 </div>
             </div>
 
@@ -159,7 +151,6 @@
                                     <th
                                         class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Keterangan Pegawai</th>
-                                    {{-- ✅ KOLOM BARU DITAMBAHKAN DI SINI --}}
                                     <th
                                         class="px-4 sm:px-6 py-3 text-left text-[10px] sm:text-xs font-medium text-gray-500 uppercase tracking-wider">
                                         Catatan dari Admin</th>
@@ -192,9 +183,7 @@
                                         <td class="px-4 sm:px-6 py-4 text-sm text-gray-900 break-words">
                                             {{ $request->keterangan_izin }}
                                         </td>
-                                        {{-- ✅ SEL BARU DITAMBAHKAN DI SINI --}}
                                         <td class="px-4 sm:px-6 py-4 text-sm text-gray-700 break-words">
-                                            {{-- Tampilkan alasan penolakan hanya jika statusnya 'ditolak' --}}
                                             @if ($request->status_izin === 'ditolak')
                                                 <span
                                                     class="text-red-600 font-medium">{{ $request->alasan_penolakan ?? 'Tidak ada catatan.' }}</span>
@@ -205,7 +194,6 @@
                                     </tr>
                                 @empty
                                     <tr>
-                                        {{-- ✅ colspan diubah menjadi 5 karena ada tambahan kolom --}}
                                         <td colspan="5" class="px-4 sm:px-6 py-4 text-center text-sm text-gray-500">
                                             Belum ada pengajuan izin
                                         </td>
@@ -244,15 +232,10 @@
                     <select name="jenis_izin"
                         class="block w-full rounded-lg border border-gray-300 bg-white px-3 sm:px-4 py-2 sm:py-2.5 text-sm sm:text-base text-gray-700 focus:border-blue-500 focus:ring-blue-500"
                         required>
-
                         <option value="" disabled selected>Pilih jenis izin</option>
-
-                        {{-- Loop ini akan membuat option secara otomatis dari database --}}
                         @foreach ($jenisKehadiran as $jenis)
-                            {{-- value akan menjadi 'S', 'I', 'C' (sesuai database), dan teksnya adalah nama lengkapnya --}}
                             <option value="{{ $jenis->code }}">{{ $jenis->name }}</option>
                         @endforeach
-
                     </select>
                 </div>
 
@@ -279,10 +262,8 @@
 
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Upload Surat Pendukung</label>
-
                     <label for="file-upload"
                         class="mt-1 flex justify-center items-center w-full px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer hover:border-blue-400 transition-colors duration-200">
-
                         <div id="file-upload-ui" class="text-center">
                             <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none"
                                 viewBox="0 0 48 48">
@@ -296,7 +277,6 @@
                             <p class="mt-1 text-xs text-gray-500">PDF, DOC, DOCX up to 10MB</p>
                         </div>
                     </label>
-
                     <input id="file-upload" name="surat[]" type="file" class="sr-only" multiple>
                 </div>
                 <div class="flex justify-end space-x-3 sm:space-x-4 mt-6 sm:mt-8">
@@ -309,12 +289,8 @@
                         Kirim Pengajuan
                     </button>
                 </div>
+            </form>
         </div>
-    </div>
-
-
-    </form>
-    </div>
     </div>
 
     <script>
@@ -329,42 +305,43 @@
             const btnAbsenPulang = document.getElementById('btnAbsenPulang');
             const btnShowIzinModal = document.getElementById('btnShowIzinModal');
 
-            // Elemen Status Jaringan
-            const statusContainer = document.getElementById('wifiStatus');
-            const statusIcon = document.getElementById('wifiIcon');
-            const statusText = document.getElementById('wifiText');
-
             // Elemen Modal Izin
             const izinModal = document.getElementById('izinModal');
             const izinForm = document.getElementById('izinForm');
-            const btnCloseModal = izinModal?.querySelector('button[onclick="closeIzinModal()"]'); // Tombol 'X'
-            const btnBatalIzin = izinForm?.querySelector('button[type="button"]'); // Tombol 'Batal'
+            const btnCloseModal = izinModal?.querySelector('button[onclick="closeIzinModal()"]');
+            const btnBatalIzin = izinForm?.querySelector('button[type="button"]');
 
             const fileInput = document.getElementById('file-upload');
             const fileUploadUI = document.getElementById('file-upload-ui');
 
             if (fileInput && fileUploadUI) {
-                // Simpan konten awal dari UI
                 const originalUploadUI = fileUploadUI.innerHTML;
 
                 fileInput.addEventListener('change', function() {
                     if (this.files && this.files.length > 0) {
-
-                        // Jika hanya satu file
                         if (this.files.length === 1) {
                             const fileName = this.files[0].name;
                             fileUploadUI.innerHTML = `
-                    <div class="flex flex-col items-center justify-center text-center">
-                        <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                        <p class="text-sm font-medium text-gray-700 break-all mt-2">${fileName}</p>
-                        <p class="text-xs text-gray-500 mt-2">Klik lagi untuk mengganti file.</p>
-                    </div>
-                `;
+                                <div class="flex flex-col items-center justify-center text-center">
+                                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-700 break-all mt-2">${fileName}</p>
+                                    <p class="text-xs text-gray-500 mt-2">Klik lagi untuk mengganti file.</p>
+                                </div>
+                            `;
+                        } else {
+                            fileUploadUI.innerHTML = `
+                                <div class="flex flex-col items-center justify-center text-center">
+                                    <svg class="w-12 h-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                                    </svg>
+                                    <p class="text-sm font-medium text-gray-700 break-all mt-2">${this.files.length} file dipilih</p>
+                                    <p class="text-xs text-gray-500 mt-2">Klik lagi untuk mengganti file.</p>
+                                </div>
+                            `;
                         }
-
-
                     } else {
-                        // Kembalikan ke UI awal jika tidak ada file yang dipilih
                         fileUploadUI.innerHTML = originalUploadUI;
                     }
                 });
@@ -378,8 +355,42 @@
             // BAGIAN 2: KUMPULAN SEMUA FUNGSI
             // =================================================================
 
-            // --- Fungsi untuk Absensi dan Status ---
+            // --- Fungsi untuk Notifikasi ---
+            function showNotification(message, type) {
+                // Buat elemen notifikasi
+                const notification = document.createElement('div');
+                notification.className = `
+                    fixed top-4 right-4 z-50 max-w-sm w-full p-4 rounded-lg shadow-lg
+                    transform transition-all duration-300 ease-in-out
+                    ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}
+                `;
+                notification.innerHTML = `
+                    <div class="flex items-center">
+                        <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="${type === 'success' ? 'M5 13l4 4L19 7' : 'M6 18L18 6M6 6l12 12'}"></path>
+                        </svg>
+                        <span class="text-sm font-medium">${message}</span>
+                    </div>
+                `;
 
+                // Tambahkan notifikasi ke body
+                document.body.appendChild(notification);
+
+                // Animasi masuk
+                setTimeout(() => {
+                    notification.classList.add('opacity-100', 'translate-y-0');
+                    notification.classList.remove('opacity-0', 'translate-y-4');
+                }, 10);
+
+                // Hapus notifikasi setelah 3 detik
+                setTimeout(() => {
+                    notification.classList.add('opacity-0', 'translate-y-4');
+                    setTimeout(() => notification.remove(), 300);
+                }, 3000);
+            }
+
+            // --- Fungsi untuk Absensi dan Status ---
             function updateButtonStates() {
                 if (!btnAbsenMasuk || !btnAbsenPulang) return;
                 const now = new Date();
@@ -441,77 +452,64 @@
 
             function closeIzinModal() {
                 if (izinModal) izinModal.classList.add('hidden');
+                if (izinForm) izinForm.reset();
+                if (fileUploadUI) fileUploadUI.innerHTML = originalUploadUI;
             }
 
             async function handleIzinSubmit(event) {
-                event.preventDefault(); // Mencegah form submit dan refresh halaman
-
+                event.preventDefault();
                 const form = event.target;
                 const formData = new FormData(form);
                 const submitButton = form.querySelector('button[type="submit"]');
                 const originalButtonText = submitButton.innerHTML;
 
-                // Menonaktifkan tombol dan menunjukkan status loading
                 submitButton.disabled = true;
                 submitButton.innerHTML =
                     `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Memproses...`;
 
                 try {
-                    const response = await fetch(
-                        "{{ route('kehadiran.submit-leave') }}", { // Pastikan nama route ini benar
-                            method: 'POST',
-                            headers: {
-                                'X-CSRF-TOKEN': csrfToken,
-                                'Accept': 'application/json' // Penting agar Laravel tahu kita mengharapkan JSON
-                            },
-                            body: formData
-                        });
+                    const response = await fetch("{{ route('kehadiran.submit-leave') }}", {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': csrfToken,
+                            'Accept': 'application/json'
+                        },
+                        body: formData
+                    });
 
                     const data = await response.json();
 
                     if (response.ok) {
-                        showNotification(data.message, 'success'); // Gunakan fungsi notifikasi yang sudah ada
+                        showNotification(data.message, 'success');
                         setTimeout(() => {
                             closeIzinModal();
-                            location.reload(); // Refresh halaman untuk update data
+                            location.reload();
                         }, 1500);
                     } else {
-                        // Menampilkan pesan error dari validasi Laravel
                         showNotification(data.message || 'Terjadi kesalahan validasi.', 'error');
                     }
-
                 } catch (error) {
                     console.error('Submission error:', error);
                     showNotification('Tidak dapat terhubung ke server. Coba lagi nanti.', 'error');
                 } finally {
-                    // Kembalikan tombol ke keadaan semula
                     submitButton.disabled = false;
                     submitButton.innerHTML = originalButtonText;
                 }
-            }
-
-            // --- Fungsi Utilitas ---
-            function showNotification(message, type) {
-                // ... (Kode notifikasi Anda yang sudah ada)
             }
 
             // =================================================================
             // BAGIAN 3: MENJALANKAN FUNGSI DAN MEMASANG EVENT LISTENERS
             // =================================================================
 
-            // Pasang listener untuk tombol-tombol utama
             if (btnAbsenMasuk) btnAbsenMasuk.addEventListener('click', () => handleAttendance('masuk'));
             if (btnAbsenPulang) btnAbsenPulang.addEventListener('click', () => handleAttendance('pulang'));
             if (btnShowIzinModal) btnShowIzinModal.addEventListener('click', showIzinModal);
             if (izinForm) izinForm.addEventListener('submit', handleIzinSubmit);
+            if (btnCloseModal) btnCloseModal.addEventListener('click', closeIzinModal);
+            if (btnBatalIzin) btnBatalIzin.addEventListener('click', closeIzinModal);
 
-
-            // Jalankan fungsi inisialisasi saat halaman dimuat
             updateButtonStates();
-
-            // Atur interval untuk auto-update status tombol setiap menit
             setInterval(updateButtonStates, 60000);
         });
     </script>
-
 </x-app-layout>
