@@ -10,9 +10,10 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
-use Filament\Navigation\UserMenuItem;
+use Filament\Navigation\MenuItem;
 use Filament\Widgets;
 use App\Http\Middleware\AdminMiddleware;
+// use App\Models\CatatanKehadiran;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
@@ -32,13 +33,17 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+            // ->resources([
+            //     CatatanKehadiranResource::class,
+            //     DailyAttendanceResource::class,
+            // ])
              ->userMenuItems([
-            UserMenuItem::make()
+            MenuItem::make()
             ->label('Dashboard Pegawai')
             ->url('/dashboard')
             ->icon('heroicon-s-squares-2x2'),
     
-            UserMenuItem::make()
+            MenuItem::make()
             ->label('Bantuan')
             ->url('/bantuan')
             ->icon('heroicon-s-question-mark-circle'),
